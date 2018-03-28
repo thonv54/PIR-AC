@@ -96,23 +96,23 @@
 // [LETIMER0]$
 
 // $[LEUART0]
-#define PORTIO_LEUART0_RX_PIN                 (9U)
-#define PORTIO_LEUART0_RX_PORT                (gpioPortC)
-#define PORTIO_LEUART0_RX_LOC                 (13U)
+#define PORTIO_LEUART0_RX_PIN                 (1U)
+#define PORTIO_LEUART0_RX_PORT                (gpioPortA)
+#define PORTIO_LEUART0_RX_LOC                 (0U)
 
-#define PORTIO_LEUART0_TX_PIN                 (10U)
-#define PORTIO_LEUART0_TX_PORT                (gpioPortC)
-#define PORTIO_LEUART0_TX_LOC                 (15U)
+#define PORTIO_LEUART0_TX_PIN                 (0U)
+#define PORTIO_LEUART0_TX_PORT                (gpioPortA)
+#define PORTIO_LEUART0_TX_LOC                 (0U)
 
 #define HAL_LEUART0_ENABLE                    (1)
 
-#define BSP_LEUART0_RX_PIN                    (9U)
-#define BSP_LEUART0_RX_PORT                   (gpioPortC)
-#define BSP_LEUART0_RX_LOC                    (13U)
+#define BSP_LEUART0_RX_PIN                    (1U)
+#define BSP_LEUART0_RX_PORT                   (gpioPortA)
+#define BSP_LEUART0_RX_LOC                    (0U)
 
-#define BSP_LEUART0_TX_PIN                    (10U)
-#define BSP_LEUART0_TX_PORT                   (gpioPortC)
-#define BSP_LEUART0_TX_LOC                    (15U)
+#define BSP_LEUART0_TX_PIN                    (0U)
+#define BSP_LEUART0_TX_PORT                   (gpioPortA)
+#define BSP_LEUART0_TX_LOC                    (0U)
 
 #define HAL_LEUART0_FLOW_CONTROL              (HAL_LEUART_FLOW_CONTROL_HW)
 #define HAL_LEUART0_TX_QUEUE_SIZE             (128UL)
@@ -129,6 +129,13 @@
 // [LNA]$
 
 // $[PA]
+#define HAL_PA_ENABLE                         (1)
+
+#define HAL_PA_RAMP                           (10UL)
+#define HAL_PA_2P4_LOWPOWER                   (0)
+#define HAL_PA_POWER                          (252U)
+#define HAL_PA_VOLTAGE                        (1800U)
+#define HAL_PA_CURVE_HEADER                    "pa_curves_efr32.h"
 // [PA]$
 
 // $[PCNT0]
@@ -152,13 +159,13 @@
 #define HAL_SERIAL_LEUART0_ENABLE             (0)
 #define HAL_SERIAL_USART1_ENABLE              (0)
 #define HAL_SERIAL_RXWAKE_ENABLE              (0)
-#define BSP_SERIAL_APP_RX_PIN                 (1U)
-#define BSP_SERIAL_APP_RX_PORT                (gpioPortA)
-#define BSP_SERIAL_APP_RX_LOC                 (0U)
+#define BSP_SERIAL_APP_RX_PIN                 (10U)
+#define BSP_SERIAL_APP_RX_PORT                (gpioPortC)
+#define BSP_SERIAL_APP_RX_LOC                 (13U)
 
-#define BSP_SERIAL_APP_TX_PIN                 (0U)
-#define BSP_SERIAL_APP_TX_PORT                (gpioPortA)
-#define BSP_SERIAL_APP_TX_LOC                 (0U)
+#define BSP_SERIAL_APP_TX_PIN                 (9U)
+#define BSP_SERIAL_APP_TX_PORT                (gpioPortC)
+#define BSP_SERIAL_APP_TX_LOC                 (15U)
 
 #define HAL_SERIAL_APP_RX_QUEUE_SIZE          (128UL)
 #define HAL_SERIAL_APP_BAUD_RATE              (115200UL)
@@ -184,23 +191,23 @@
 // [UARTNCP]$
 
 // $[USART0]
-#define PORTIO_USART0_RX_PIN                  (1U)
-#define PORTIO_USART0_RX_PORT                 (gpioPortA)
-#define PORTIO_USART0_RX_LOC                  (0U)
+#define PORTIO_USART0_RX_PIN                  (9U)
+#define PORTIO_USART0_RX_PORT                 (gpioPortC)
+#define PORTIO_USART0_RX_LOC                  (13U)
 
-#define PORTIO_USART0_TX_PIN                  (0U)
-#define PORTIO_USART0_TX_PORT                 (gpioPortA)
-#define PORTIO_USART0_TX_LOC                  (0U)
+#define PORTIO_USART0_TX_PIN                  (10U)
+#define PORTIO_USART0_TX_PORT                 (gpioPortC)
+#define PORTIO_USART0_TX_LOC                  (15U)
 
 #define HAL_USART0_ENABLE                     (1)
 
-#define BSP_USART0_RX_PIN                     (1U)
-#define BSP_USART0_RX_PORT                    (gpioPortA)
-#define BSP_USART0_RX_LOC                     (0U)
+#define BSP_USART0_RX_PIN                     (10U)
+#define BSP_USART0_RX_PORT                    (gpioPortC)
+#define BSP_USART0_RX_LOC                     (13U)
 
-#define BSP_USART0_TX_PIN                     (0U)
-#define BSP_USART0_TX_PORT                    (gpioPortA)
-#define BSP_USART0_TX_LOC                     (0U)
+#define BSP_USART0_TX_PIN                     (9U)
+#define BSP_USART0_TX_PORT                    (gpioPortC)
+#define BSP_USART0_TX_LOC                     (15U)
 
 #define HAL_USART0_RX_QUEUE_SIZE              (128UL)
 #define HAL_USART0_BAUD_RATE                  (115200UL)

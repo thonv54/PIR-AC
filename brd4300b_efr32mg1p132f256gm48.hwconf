@@ -27,8 +27,8 @@
     <property object="LED" propertyId="LED.HAL_LED_ENABLE.ARRAY" value="{}"/>
     <property object="LED" propertyId="LED.showadvanced.BOOL" value="1"/>
     <property object="LEUART0" propertyId="ABPeripheral.included" value="true"/>
-    <property object="LEUART0" propertyId="LEUART.BSP_LEUART_RX.PIN" value="PA1"/>
-    <property object="LEUART0" propertyId="LEUART.BSP_LEUART_TX.PIN" value="PA0"/>
+    <property object="LEUART0" propertyId="LEUART.BSP_LEUART_RX.PIN" value="PC9"/>
+    <property object="LEUART0" propertyId="LEUART.BSP_LEUART_TX.PIN" value="PC10"/>
     <property object="LEUART0" propertyId="LEUART.HAL_LEUART_BAUD_RATE.INT" value="19200"/>
     <property object="LEUART0" propertyId="LEUART.HAL_LEUART_FLOW_CONTROL.ENUM" value="HAL_LEUART_FLOW_CONTROL_HW"/>
     <property object="LEUART0" propertyId="LEUART.HAL_LEUART_RXSTART.INT" value="16"/>
@@ -36,23 +36,22 @@
     <property object="LEUART0" propertyId="LEUART.HAL_LEUART_RX_QUEUE_SIZE.INT" value="128"/>
     <property object="LEUART0" propertyId="LEUART.HAL_LEUART_TX_QUEUE_SIZE.INT" value="128"/>
     <property object="LEUART0" propertyId="LEUART.showadvanced.BOOL" value="1"/>
-    <property object="PA" propertyId="ABPeripheral.included" value="true"/>
     <property object="PA" propertyId="PA.HAL_PA_VOLTAGE.INT" value="1800"/>
     <property object="PORTIO" propertyId="portio.adc0.location.adc0_neg_cy" value="11"/>
-    <property object="PORTIO" propertyId="portio.i2c0.location.i2c0_sclloc" value="6"/>
+    <property object="PORTIO" propertyId="portio.i2c0.location.i2c0_sclloc" value="15"/>
     <property object="PORTIO" propertyId="portio.i2c0.location.i2c0_sdaloc" value="15"/>
     <property object="PORTIO" propertyId="portio.leuart0.enable.rx" value="Enabled"/>
     <property object="PORTIO" propertyId="portio.leuart0.enable.tx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.leuart0.location.leuart0_rxloc" value="13"/>
+    <property object="PORTIO" propertyId="portio.leuart0.location.leuart0_txloc" value="15"/>
     <property object="PORTIO" propertyId="portio.pcnt0.location.pcnt0_s1inloc" value="1"/>
     <property object="PORTIO" propertyId="portio.prs.location.prs_ch4loc" value="4"/>
     <property object="PORTIO" propertyId="portio.pti.location.frc_dframeloc" value="6"/>
     <property object="PORTIO" propertyId="portio.pti.location.frc_doutloc" value="6"/>
     <property object="PORTIO" propertyId="portio.usart0.enable.rx" value="Enabled"/>
     <property object="PORTIO" propertyId="portio.usart0.enable.tx" value="Enabled"/>
-    <property object="PORTIO" propertyId="portio.usart0.location.usart0_ctsloc" value="7"/>
-    <property object="PORTIO" propertyId="portio.usart0.location.usart0_rtsloc" value="10"/>
-    <property object="PORTIO" propertyId="portio.usart0.location.usart0_rxloc" value="13"/>
-    <property object="PORTIO" propertyId="portio.usart0.location.usart0_txloc" value="15"/>
+    <property object="PORTIO" propertyId="portio.usart0.location.usart0_ctsloc" value="30"/>
+    <property object="PORTIO" propertyId="portio.usart0.location.usart0_rtsloc" value="30"/>
     <property object="PORTIO" propertyId="portio.usart1.location.usart1_clkloc" value="11"/>
     <property object="PORTIO" propertyId="portio.usart1.location.usart1_csloc" value="11"/>
     <property object="PORTIO" propertyId="portio.usart1.location.usart1_rxloc" value="11"/>
@@ -74,8 +73,8 @@
     <property object="USART0" propertyId="ABPeripheral.included" value="true"/>
     <property object="USART0" propertyId="USART.BSP_USART_MISO.PIN" value="PA1"/>
     <property object="USART0" propertyId="USART.BSP_USART_MOSI.PIN" value="PA0"/>
-    <property object="USART0" propertyId="USART.BSP_USART_RX.PIN" value="PC10"/>
-    <property object="USART0" propertyId="USART.BSP_USART_TX.PIN" value="PC9"/>
+    <property object="USART0" propertyId="USART.BSP_USART_RX.PIN" value="PA1"/>
+    <property object="USART0" propertyId="USART.BSP_USART_TX.PIN" value="PA0"/>
     <property object="USART0" propertyId="USART.HAL_USART_RXSTART.INT" value="16"/>
     <property object="USART0" propertyId="USART.HAL_USART_RXSTOP.INT" value="16"/>
     <property object="USART0" propertyId="USART.HAL_USART_RX_QUEUE_SIZE.INT" value="128"/>

@@ -379,11 +379,11 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>
@@ -710,11 +710,11 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>

@@ -9,11 +9,11 @@
 // Token header for the token.properties.
 #include "protocol/zigbee_6.1/app/framework/util/tokens.h"
 
-// Token header for the Scenes Server Cluster plugin.
-#include "protocol/zigbee_6.1/app/framework/plugin/scenes/scenes-tokens.h"
-
 // Token header for the Reporting plugin.
 #include "protocol/zigbee_6.1/app/framework/plugin/reporting/reporting-tokens.h"
+
+// Token header for the Scenes Server Cluster plugin.
+#include "protocol/zigbee_6.1/app/framework/plugin/scenes/scenes-tokens.h"
 
 #ifdef CUSTOM_TOKEN_HEADER
   #include CUSTOM_TOKEN_HEADER
