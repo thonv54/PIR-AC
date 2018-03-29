@@ -96,25 +96,25 @@
 // [LETIMER0]$
 
 // $[LEUART0]
-#define PORTIO_LEUART0_RX_PIN                 (9U)
+#define PORTIO_LEUART0_RX_PIN                 (10U)
 #define PORTIO_LEUART0_RX_PORT                (gpioPortC)
-#define PORTIO_LEUART0_RX_LOC                 (13U)
+#define PORTIO_LEUART0_RX_LOC                 (14U)
 
-#define PORTIO_LEUART0_TX_PIN                 (10U)
+#define PORTIO_LEUART0_TX_PIN                 (9U)
 #define PORTIO_LEUART0_TX_PORT                (gpioPortC)
-#define PORTIO_LEUART0_TX_LOC                 (15U)
+#define PORTIO_LEUART0_TX_LOC                 (14U)
 
 #define HAL_LEUART0_ENABLE                    (1)
 
-#define BSP_LEUART0_RX_PIN                    (9U)
+#define BSP_LEUART0_RX_PIN                    (10U)
 #define BSP_LEUART0_RX_PORT                   (gpioPortC)
-#define BSP_LEUART0_RX_LOC                    (13U)
+#define BSP_LEUART0_RX_LOC                    (14U)
 
-#define BSP_LEUART0_TX_PIN                    (10U)
+#define BSP_LEUART0_TX_PIN                    (9U)
 #define BSP_LEUART0_TX_PORT                   (gpioPortC)
-#define BSP_LEUART0_TX_LOC                    (15U)
+#define BSP_LEUART0_TX_LOC                    (14U)
 
-#define HAL_LEUART0_FLOW_CONTROL              (HAL_LEUART_FLOW_CONTROL_HW)
+#define HAL_LEUART0_FLOW_CONTROL              (HAL_LEUART_FLOW_CONTROL_NONE)
 #define HAL_LEUART0_TX_QUEUE_SIZE             (128UL)
 #define HAL_LEUART0_RX_QUEUE_SIZE             (128UL)
 #define HAL_LEUART0_RXSTART                   (16UL)
@@ -129,6 +129,13 @@
 // [LNA]$
 
 // $[PA]
+#define HAL_PA_ENABLE                         (1)
+
+#define HAL_PA_RAMP                           (10UL)
+#define HAL_PA_2P4_LOWPOWER                   (0)
+#define HAL_PA_POWER                          (252U)
+#define HAL_PA_VOLTAGE                        (1800U)
+#define HAL_PA_CURVE_HEADER                    "pa_curves_efr32.h"
 // [PA]$
 
 // $[PCNT0]
@@ -147,25 +154,25 @@
 // [PYD1698]$
 
 // $[SERIAL]
-#define HAL_SERIAL_USART0_ENABLE              (0)
-#define BSP_SERIAL_APP_PORT                   (HAL_SERIAL_PORT_USART0)
-#define HAL_SERIAL_LEUART0_ENABLE             (0)
+#define HAL_SERIAL_USART0_ENABLE              (1)
+#define BSP_SERIAL_APP_PORT                   (HAL_SERIAL_PORT_LEUART0)
+#define HAL_SERIAL_LEUART0_ENABLE             (1)
 #define HAL_SERIAL_USART1_ENABLE              (0)
 #define HAL_SERIAL_RXWAKE_ENABLE              (0)
-#define BSP_SERIAL_APP_RX_PIN                 (1U)
-#define BSP_SERIAL_APP_RX_PORT                (gpioPortA)
-#define BSP_SERIAL_APP_RX_LOC                 (0U)
+#define BSP_SERIAL_APP_RX_PIN                 (10U)
+#define BSP_SERIAL_APP_RX_PORT                (gpioPortC)
+#define BSP_SERIAL_APP_RX_LOC                 (14U)
 
-#define BSP_SERIAL_APP_TX_PIN                 (0U)
-#define BSP_SERIAL_APP_TX_PORT                (gpioPortA)
-#define BSP_SERIAL_APP_TX_LOC                 (0U)
+#define BSP_SERIAL_APP_TX_PIN                 (9U)
+#define BSP_SERIAL_APP_TX_PORT                (gpioPortC)
+#define BSP_SERIAL_APP_TX_LOC                 (14U)
 
-#define HAL_SERIAL_APP_RX_QUEUE_SIZE          (128UL)
-#define HAL_SERIAL_APP_BAUD_RATE              (115200UL)
-#define HAL_SERIAL_APP_RXSTOP                 (16UL)
-#define HAL_SERIAL_APP_RXSTART                (16UL)
+#define HAL_SERIAL_APP_FLOW_CONTROL           (HAL_LEUART_FLOW_CONTROL_NONE)
 #define HAL_SERIAL_APP_TX_QUEUE_SIZE          (128UL)
-#define HAL_SERIAL_APP_FLOW_CONTROL           (HAL_USART_FLOW_CONTROL_NONE)
+#define HAL_SERIAL_APP_RX_QUEUE_SIZE          (128UL)
+#define HAL_SERIAL_APP_RXSTART                (16UL)
+#define HAL_SERIAL_APP_BAUD_RATE              (19200UL)
+#define HAL_SERIAL_APP_RXSTOP                 (16UL)
 // [SERIAL]$
 
 // $[SPIDISPLAY]
@@ -203,7 +210,7 @@
 #define BSP_USART0_TX_LOC                     (0U)
 
 #define HAL_USART0_RX_QUEUE_SIZE              (128UL)
-#define HAL_USART0_BAUD_RATE                  (115200UL)
+#define HAL_USART0_BAUD_RATE                  (19200UL)
 #define HAL_USART0_RXSTOP                     (16UL)
 #define HAL_USART0_RXSTART                    (16UL)
 #define HAL_USART0_TX_QUEUE_SIZE              (128UL)

@@ -19,6 +19,11 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include "app/framework/include/af.h"
+#include "stack/include/event.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
+#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
+#include "1_SourceCode/CustomLib/macro.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -30,7 +35,7 @@
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
+EmberEventControl TestEventControl;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
@@ -38,6 +43,33 @@
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
+void TestEventFunction(void);
+
+
+
+
+
+
+
+
+
+/******************************************************************************/
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+
+void TestEventFunction(void) {
+	emberEventControlSetInactive(TestEventControl);
+	emberEventControlSetDelayMS(TestEventControl, 1000);
+//	ledTurnOn(ledColorBlue);
+}
+
 
 
 
@@ -63,18 +95,25 @@
  */
 void emberAfMainInitCallback(void)
 {
+	uartDriverInitData_str uartInitData;
+	uartInitData.GetDataCallback = NULL;
+	uartInitData.UartAckCallback = NULL;
+	uartInitData.UartNackCallback = NULL;
+	uartInitData.port = COM_USART0;
+	uartInitData.rate = 19200;
+	uartInitData.parity = PARITY_NONE;
+	uartInitData.stopBits = 1;
 
+	uartCmdParseInit(uartInitData);
+
+	buttonCallbackInit(NULL,NULL);
+
+
+	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
+
+
+	emberEventControlSetDelayMS(TestEventControl, 1000);
 }
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 
 /**

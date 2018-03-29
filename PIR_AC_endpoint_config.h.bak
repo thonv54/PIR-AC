@@ -179,6 +179,8 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   extern void emberAfPluginNetworkFindTickEventHandler(void); \
   extern void emberAfPluginReportingTickEventHandler(void); \
   extern void emberAfPluginScanDispatchScanEventHandler(void); \
+  extern EmberEventControl uartGetCmdEventControl; \
+  extern void uartGetCmdEventFunction(void); \
   static void clusterTickWrapper(EmberEventControl *control, EmberAfTickFunction callback, uint8_t endpoint) \
   { \
     emberAfPushEndpointNetworkIndex(endpoint); \
@@ -203,6 +205,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   { &emberAfPluginNetworkFindTickEventControl, emberAfPluginNetworkFindTickEventHandler }, \
   { &emberAfPluginReportingTickEventControl, emberAfPluginReportingTickEventHandler }, \
   { &emberAfPluginScanDispatchScanEventControl, emberAfPluginScanDispatchScanEventHandler }, \
+  { &uartGetCmdEventControl, uartGetCmdEventFunction }, \
 
 
 #define EMBER_AF_GENERATED_EVENT_STRINGS   \
@@ -215,6 +218,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   "Network Find Plugin Tick",  \
   "Reporting Plugin Tick",  \
   "Scan Dispatch Plugin Scan",  \
+  "uartGetCmd Custom",  \
 
 
 // The length of the event context table used to track and retrieve cluster events

@@ -2,7 +2,7 @@
 
 
 
-#include "macro.h"
+#include <1_SourceCode/CustomLib/macro.h>
 #include "app/framework/include/af.h"
 
 
@@ -39,8 +39,6 @@ void SwapEndiannessEUI64(unsigned char *val)
 
     memcpy(val,ret, sizeof(ret));
 }
-
-
 
 
 

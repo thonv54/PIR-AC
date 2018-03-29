@@ -27,11 +27,15 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
+typedef void (*typeGetButtonCallback)(int8u *data);
+typedef void (*typeGetSensorCallback)(int8u *data);
+typedef void (*typeGetRelayCallback)(int8u *data);
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -44,6 +48,11 @@
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
+void uartCmdParseInit(uartDriverInitData_str uartDriverInitData);
+
+void cmdParseButtonCallbackInit(typeGetButtonCallback getButtonCallback);
+void cmdParseSensorCallbackInit(typeGetSensorCallback getSensorCallback);
+void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback);
 
 /**
  * @func

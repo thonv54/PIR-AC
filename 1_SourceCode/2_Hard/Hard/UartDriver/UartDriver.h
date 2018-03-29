@@ -5,7 +5,6 @@
 
 
 
-#endif /* 1_SOURCECODE_2_HARD_HARD_UARTDRIVER_UARTDRIVER_H_ */
 
 
 /*******************************************************************************
@@ -30,7 +29,6 @@
 /******************************************************************************/
 
 #include "app/framework/include/af.h"
-#include "serial/serial.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -69,7 +67,26 @@ typedef enum{
 	CMD_ID_LIGHT_THRES = 5,
 	CMD_ID_TIMEOUT 	   = 6,
 	CMD_ID_ERROR 	   = 7
-};
+}CmdID_enum;
+
+
+typedef enum{
+	BUTTON_PRESS = 0,
+	BUTTON_HOLD3S = 1,
+	BUTTON_HOLD5S = 2,
+	BUTTON_HOLD10s = 3,
+	BUTTON_RELEASE = 0xFF,
+}ButtonStateID_enum;
+
+#define	leUpdateButtonCmd 		 	 5
+#define	leUpdatePirStatecmd 		 5
+#define	leUpdateLuxCmd 		 		 6
+#define	leUpdateLigthThressCmd 		 6
+#define	leUpdateTimeoutCmd 		 	 6
+#define	leSetupLedCmd 		 		 9
+#define	leSetupRelayCmd      		 5
+
+
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -78,7 +95,8 @@ typedef enum{
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
+// Event control struct declaration
+extern EmberEventControl uartGetCmdEventControl;
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -122,3 +140,6 @@ void uartSendCommand(int8u txPacketLength,
  *
  * @retval None
  */
+
+
+#endif /* 1_SOURCECODE_2_HARD_HARD_UARTDRIVER_UARTDRIVER_H_ */

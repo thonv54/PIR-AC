@@ -179,7 +179,9 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   extern void emberAfPluginNetworkFindTickEventHandler(void); \
   extern void emberAfPluginReportingTickEventHandler(void); \
   extern void emberAfPluginScanDispatchScanEventHandler(void); \
+  extern EmberEventControl TestEventControl; \
   extern EmberEventControl uartGetCmdEventControl; \
+  extern void TestEventFunction(void); \
   extern void uartGetCmdEventFunction(void); \
   static void clusterTickWrapper(EmberEventControl *control, EmberAfTickFunction callback, uint8_t endpoint) \
   { \
@@ -205,6 +207,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   { &emberAfPluginNetworkFindTickEventControl, emberAfPluginNetworkFindTickEventHandler }, \
   { &emberAfPluginReportingTickEventControl, emberAfPluginReportingTickEventHandler }, \
   { &emberAfPluginScanDispatchScanEventControl, emberAfPluginScanDispatchScanEventHandler }, \
+  { &TestEventControl, TestEventFunction }, \
   { &uartGetCmdEventControl, uartGetCmdEventFunction }, \
 
 
@@ -218,6 +221,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   "Network Find Plugin Tick",  \
   "Reporting Plugin Tick",  \
   "Scan Dispatch Plugin Scan",  \
+  "Test Custom",  \
   "uartGetCmd Custom",  \
 
 

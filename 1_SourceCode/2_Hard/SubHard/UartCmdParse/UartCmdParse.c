@@ -20,31 +20,25 @@
 /******************************************************************************/
 
 #include "app/framework/include/af.h"
+#include "app/framework/util/config.h"
+#include "1_SourceCode/CustomLib/macro.h"
+#include "serial/serial.h"
 
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
-#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
-
-#include "app/framework/util/config.h"
-#include "1_SourceCode/3_CustomLib/macro.h"
-
-
-#include "serial/serial.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-typedef void (*typeButtonCallback)(int8u *data);
-typedef void (*typeSensorCallback)(int8u *data);
-typedef void (*typeRelayCallback)(int8u *data);
+
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeButtonCallback pvButtonCallback;
-typeSensorCallback pvSensorCallback;
-typeRelayCallback  pvRelayCallback;
+typeGetButtonCallback pvGetButtonCallback;
+typeGetSensorCallback pvGetSensorCallback;
+typeGetRelayCallback  pvGetRelayCallback;
 
-void GetDataHandler(int8u *data);
+
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
@@ -52,7 +46,9 @@ void GetDataHandler(int8u *data);
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
+void GetDataHandler(int8u *data);
 
+void errorUartCmdParseCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -68,20 +64,20 @@ void GetDataHandler(int8u *data);
  *
  * @retval None
  */
-void cmdParseInitButtonCallback(typeButtonCallback buttonCallback){
-	if(buttonCallback != NULL){
-		pvButtonCallback = buttonCallback;
+void cmdParseButtonCallbackInit(typeGetButtonCallback getButtonCallback){
+	if(getButtonCallback != NULL){
+		pvGetButtonCallback = getButtonCallback;
 	}
 }
-void cmdParseInitSensorCallback(typeSensorCallback sensorCallback){
-	if(sensorCallback !=  NULL){
-		pvSensorCallback = sensorCallback;
+void cmdParseSensorCallbackInit(typeGetSensorCallback getSensorCallback){
+	if(getSensorCallback !=  NULL){
+		pvGetSensorCallback = getSensorCallback;
 	}
 }
 
-void cmdParseInitRelayCallback(typeRelayCallback  relayCallback){
-	if(relayCallback != NULL){
-		pvRelayCallback = relayCallback;
+void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback){
+	if(getRelayCallback != NULL){
+		pvGetRelayCallback = getRelayCallback;
 	}
 }
 void uartCmdParseInit(uartDriverInitData_str uartDriverInitData){
@@ -110,18 +106,36 @@ void GetDataHandler(int8u *data){
 	case CMD_TYPE_RESPONSE:
 		switch(byPacketCmdId){
 		case CMD_ID_BUTTON:
-			pvButtonCallback(data);
+			if(pvGetButtonCallback != NULL){
+				pvGetButtonCallback(data);
+			}
+			else{
+				errorUartCmdParseCallbackPrint();
+				// cb_error
+			}
 			break;
 		case CMD_ID_LED:
 			break;
 		case CMD_ID_RELAY:
-			pvRelayCallback(data);
+			if(pvGetRelayCallback!= NULL){
+				pvGetRelayCallback(data);
+			}
+			else{
+				errorUartCmdParseCallbackPrint();
+				// cb_error
+			}
 			break;
 		case CMD_ID_PIR:
 		case CMD_ID_LUX:
 		case CMD_ID_LIGHT_THRES:
 		case CMD_ID_TIMEOUT:
-			pvSensorCallback(data);
+			if(pvGetSensorCallback != NULL){
+				pvGetSensorCallback(data);
+			}
+			else{
+				errorUartCmdParseCallbackPrint();
+				// cb_error
+			}
 			break;
 		case CMD_ID_ERROR:
 			break;
@@ -143,7 +157,9 @@ void GetDataHandler(int8u *data){
  *
  * @retval None
  */
-
+void errorUartCmdParseCallbackPrint(void){
+	emberSerialPrintf(APP_SERIAL,"    CallbackInUartCmdParseError \n\r");
+}
 /**
  * @func
  *
