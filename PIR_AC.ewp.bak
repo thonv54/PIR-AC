@@ -379,11 +379,12 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
+          <state>$PROJ_DIR$\1_SourceCode</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>
@@ -710,11 +711,12 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
+          <state>$PROJ_DIR$\1_SourceCode</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>
@@ -1223,7 +1225,19 @@
   </group>
   <file><name>$PROJ_DIR$/../../../app/builder/PIR_AC/PIR_AC_callbacks.c</name></file>
 
-  <file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\cortexm\efm32\com.c</name></file>
+  <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\MainApp\Main\AppMain.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeJoinAndLeaveNwk\ZigbeeJoinAndLeaveNwk.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeReceiver\ZigbeeReceiver.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeSend\ZigbeeSend.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\Button.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\LedControl\LedControl.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\RelayControl\RelayControl.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Sensor\Sensor.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\2_Hard\Hard\UartDriver\UartDriver.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\2_Hard\SubHard\UartCmdParse\UartCmdParse.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\CustomLib\macro.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\CustomLib\Template.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\cortexm\efm32\com.c</name></file>
 <file><name>$PROJ_DIR$/../../../platform\emdrv\uartdrv\src\uartdrv.c</name></file>
 
 

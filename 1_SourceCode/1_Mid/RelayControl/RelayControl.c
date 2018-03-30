@@ -26,33 +26,29 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-typedef struct{
-	boolean relayCurrentState;
-	boolean relayLastState;
-	int32u LastTimeFromGetState;
-}RelayData_str;
 
-typedef void (*typeRelayCallback)(char data);
+
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 typeRelayCallback pvRelayCallback;
-RelayData_str pvRelay;
+
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
+RelayData_str gRelay;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void relayHandler(int8u *data);
+void errorMidRelayCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
+void relayCallbackInit(typeRelayCallback relayCallback);
 
 
-
-void RelayCallbackInit(typeRelayCallback relayCallback){
+void relayCallbackInit(typeRelayCallback relayCallback){
 	cmdParseRelayCallbackInit(relayHandler);
 	if(relayCallback != NULL){
 		pvRelayCallback = relayCallback;
@@ -68,15 +64,23 @@ void RelayCallbackInit(typeRelayCallback relayCallback){
  * @retval None
  */
 void relayHandler(int8u *data){
-	pvRelay.relayCurrentState = data[3];
-	int8u cmdType = data[1];
+	int8u relayState = data[3];
 
-	switch (cmdType){
-	case CMD_TYPE_UPDATE:
-		break;
-	default:
-		break;
+	if(relayState == rlOnState){
+		gRelay.relayCurrentState = boolRlOn;
 	}
+	else if(relayState == rlOffState){
+		gRelay.relayCurrentState = boolRlOff;
+	}
+	if(pvRelayCallback != NULL){
+		pvRelayCallback(gRelay.relayCurrentState);
+	}
+	else{
+		errorMidRelayCallbackPrint();
+		// error_cb
+	}
+	gRelay.relayLastState = gRelay.relayCurrentState;
+	gRelay.LastTimeFromGetState = halCommonGetInt32uMillisecondTick();
 }
 
 /**
@@ -89,7 +93,9 @@ void relayHandler(int8u *data){
  * @retval None
  */
 
-
+void errorMidRelayCallbackPrint(void){
+	emberSerialPrintf(APP_SERIAL,"    CallbackInMidRelaynError \n\r");
+}
 /**
  * @func
  *

@@ -78,6 +78,16 @@ typedef enum{
 	BUTTON_RELEASE = 0xFF,
 }ButtonStateID_enum;
 
+typedef enum{
+	rlOffState = 0x00,
+	rlOnState = 0x01,
+}RelayState_enum;
+
+typedef enum{
+	pirNoMotion = 0x00,
+	pirMotion = 0x01,
+}PirState_enum;
+
 #define	leUpdateButtonCmd 		 	 5
 #define	leUpdatePirStatecmd 		 5
 #define	leUpdateLuxCmd 		 		 6

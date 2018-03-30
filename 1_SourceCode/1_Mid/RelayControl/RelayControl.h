@@ -20,9 +20,22 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
+#include "app/framework/include/af.h"
+#include "app/framework/util/config.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+typedef void (*typeRelayCallback)(boolean data);
+typedef struct{
+	boolean relayCurrentState;
+	boolean relayLastState;
+	int32u LastTimeFromGetState;
+}RelayData_str;
+
+typedef enum{
+	boolRlOn = 1,
+	boolRlOff = 0,
+}boolRelayState_enum;
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -31,11 +44,11 @@
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
+extern RelayData_str gRelay;
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-
+void relayCallbackInit(typeRelayCallback relayCallback);
 /**
  * @func
  *

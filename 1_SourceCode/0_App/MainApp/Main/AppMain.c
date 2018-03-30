@@ -23,7 +23,9 @@
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "1_SourceCode/1_Mid/LedControl/LedControl.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "1_SourceCode/CustomLib/macro.h"
+#include "hal/micro/serial.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -106,8 +108,7 @@ void emberAfMainInitCallback(void)
 
 	uartCmdParseInit(uartInitData);
 
-	buttonCallbackInit(NULL,NULL);
-
+	zbSendInit();
 
 	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
 

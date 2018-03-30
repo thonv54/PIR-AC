@@ -19,7 +19,7 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include <1_SourceCode/CustomLib/macro.h>
-#include "1_SourceCode/1_Mid/Button/Button.h"
+#include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
@@ -160,6 +160,7 @@ void buttonStateFromUartHandle(int8u *data){
 		break;
 	}
 	pvButton.ButtonLastState = pvButton.ButtonCurrentState;
+	pvButton.LastTimeFromGetState = halCommonGetInt32uMillisecondTick();
 
 }
 

@@ -256,6 +256,19 @@ NetworkKey2:ABCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 # Setup configurations
 {setupId:additionalFiles
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/MainApp/Main/AppMain.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/Button/Button.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/LedControl/LedControl.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/RelayControl/RelayControl.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/Sensor/Sensor.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/CustomLib/macro.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/CustomLib/Template.c
 }
 {setupId:bleGattConfigurator
 <?xml version="1.0" encoding="UTF-8"?><project>
