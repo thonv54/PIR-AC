@@ -59,6 +59,11 @@ void SendGlobalServerToClientReadAttributeReport(int8u endpoint,
 												EmberAfAttributeId attributeId,
 												int8u* value,
 												int8u dataType);
+void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
+        										   EmberAfClusterId clusterId,
+												   EmberAfAttributeId attributeId,
+												   int8u* value,
+												   int8u dataType);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -99,7 +104,7 @@ void zbSendInit(void){
  * @retval None
  */
 void zbSendRelayState(boolean State){
-	SendGlobalServerToClientReadAttributeReport(zbLightEp,
+	SendGlobalServerToClientReadAttributeResponse(zbLightEp,
 			ZCL_ON_OFF_CLUSTER_ID,
 			ZCL_ON_OFF_ATTRIBUTE_ID,
 			(int8u*)&State,
@@ -125,7 +130,7 @@ void zbSendPirState(boolean State){
 		zoneStatusBitmap = PIR_MOTION_DETECTED;
 	}
 
-	SendGlobalServerToClientReadAttributeReport(zbLightEp,
+	SendGlobalServerToClientReadAttributeResponse(zbLightEp,
 			ZCL_IAS_ZONE_CLUSTER_ID,
 			ZCL_ZONE_STATUS_ATTRIBUTE_ID,
 			(int8u*)&zoneStatusBitmap,
@@ -144,7 +149,7 @@ void zbSendPirState(boolean State){
  */
 
 void zbSendLuxValue(int16u Value){
-	SendGlobalServerToClientReadAttributeReport(zbLuxEp,
+	SendGlobalServerToClientReadAttributeResponse(zbLuxEp,
 												ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
 												ZCL_ILLUM_MEASURED_VALUE_ATTRIBUTE_ID,
 												(int8u*)&Value,
@@ -161,7 +166,7 @@ void zbSendLuxValue(int16u Value){
  */
 
 void zbSendLightThress(int16u Value){
-	SendGlobalServerToClientReadAttributeReport(zbLuxEp,
+	SendGlobalServerToClientReadAttributeResponse(zbLuxEp,
 												ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
 												ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID,
 												(int8u*)&Value,
@@ -179,7 +184,7 @@ void zbSendLightThress(int16u Value){
  */
 
 void zbSendPirTimeout(int16u Value){
-	SendGlobalServerToClientReadAttributeReport(zbLuxEp,
+	SendGlobalServerToClientReadAttributeResponse(zbLuxEp,
 												ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
 												ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID,
 												(int8u*)&Value,
@@ -197,6 +202,43 @@ void zbSendPirTimeout(int16u Value){
  * @retval None
  */
 
+void zbSendBasicModelAttributeResponse(void){
+	int8u data[64] = {9,'L','M','-','P','I','R','-','A','C',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	SendGlobalServerToClientReadAttributeResponse(
+			zbLightEp,
+			ZCL_BASIC_CLUSTER_ID,
+			ZCL_MODEL_IDENTIFIER_ATTRIBUTE_ID,
+			(int8u*)&data,
+			ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
+}
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+
+void zbSendBasicManufacturerAttributeResponse(void){
+	int8u data[64] = {4,'L','u','m','i',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	SendGlobalServerToClientReadAttributeResponse(
+			zbLightEp,
+			ZCL_BASIC_CLUSTER_ID,
+			ZCL_MANUFACTURER_NAME_ATTRIBUTE_ID,
+			(int8u*)&data,
+			ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
+}
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
 void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
         										   EmberAfClusterId clusterId,
 												   EmberAfAttributeId attributeId,

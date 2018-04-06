@@ -21,28 +21,12 @@
 #include <1_SourceCode/CustomLib/macro.h>
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
-#include "app/framework/include/af.h"
-#include "app/framework/util/config.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
 
-typedef enum{
-	stPress = 0,    // bat dau nhan nut
-	stHold3s = 1,	// thoi diem giu toi 3s
-	stHold5s = 2,
-	stHold10s = 3,
-	rlPress  = 4,
-	rlHold3s = 5,
-	rlHold5s = 6,
-	rlHold10s = 7,
-	Press2 = 8,
-	Press3 = 9,
-	Press4 = 10,
-	Press5 = 11,
-	PressManyTime = 12,
-}buttonState_enum;
+
 
 typedef struct{
 	int8u ButtonCurrentState;

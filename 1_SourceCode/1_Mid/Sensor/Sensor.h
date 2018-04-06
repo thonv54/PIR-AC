@@ -61,6 +61,7 @@ void sensorPirCallbackInit(typeSensorPirCallback sensorPirCallback);
 void sensorLuxvalueCallbackInit(typeSensorLuxValueCallback sensorLuxValueCallback);
 void sensorLightThressCallbackInit(typeSensorLightThressCallback SensorLightThressCallback );
 void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutCallback);
+void getLuxValue(void);
 /**
  * @func
  *

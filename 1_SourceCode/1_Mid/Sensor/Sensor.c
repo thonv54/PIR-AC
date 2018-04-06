@@ -193,3 +193,8 @@ void errorMidSensorCallbackPrint(void){
  *
  * @retval None
  */
+void getLuxValue(void){
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LUX,NULL);
+}
+
+

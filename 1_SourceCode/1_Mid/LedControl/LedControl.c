@@ -20,36 +20,36 @@
 /******************************************************************************/
 #include "1_SourceCode/1_Mid/LedControl/LedControl.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
+#include "app/framework/util/config.h"
+#include "1_SourceCode/CustomLib/macro.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
 
 
-
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
+int8u currentLedColor;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-
+void errorMidLedCallbackPrint(void);
+void ledResponseHandle(int8u* data);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void ledTurnOn(ledColor_enum color);
+void ledTurnOn(int8u color);
 void ledTurnOff(void);
-void ledBlink(ledColor_enum color,
+void ledBlink(int8u color,
 				int8u timeDelay,
 				int8u times,
 				int8u lastState);
-
-
 
 
 /**
@@ -61,7 +61,32 @@ void ledBlink(ledColor_enum color,
  *
  * @retval None
  */
-void ledTurnOn(ledColor_enum color){
+void ledResponseCallbackInit(void){
+	cmdParseLedCallbackInit(ledResponseHandle);
+}
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void ledResponseHandle(int8u* data){
+	currentLedColor = data[3];
+}
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void ledTurnOn(int8u color){
 	ledParam_str ledParam;
 	ledParam.LedColor = color;
 	ledParam.LedControlState = ledStateOn;
@@ -94,7 +119,7 @@ void ledTurnOff(void){
  *
  * @retval None
  */
-void ledBlink(ledColor_enum color,
+void ledBlink(int8u color,
 				int8u timeDelay,
 				int8u times,
 				int8u lastState){
@@ -116,3 +141,20 @@ void ledBlink(ledColor_enum color,
  *
  * @retval None
  */
+void ledGetState(void){
+	ledResponseCallbackInit();
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL);
+}
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void errorMidLedCallbackPrint(void){
+	emberSerialPrintf(APP_SERIAL,"    CallbackInMidLedError \n\r");
+}

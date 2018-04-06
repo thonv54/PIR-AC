@@ -840,16 +840,6 @@ bool emberAfMainStartCallback(int* returnCode,
   return false;  // exit?
 }
 
-/** @brief Main Tick
- *
- * Whenever main application tick is called, this callback will be called at the
- * end of the main tick execution.
- *
- */
-void emberAfMainTickCallback(void)
-{
-}
-
 /** @brief Message Sent
  *
  * This function is called by the application framework from the message sent

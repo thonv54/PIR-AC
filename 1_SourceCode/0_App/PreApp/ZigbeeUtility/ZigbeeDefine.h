@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  *
  * Copyright (c) 2016
@@ -16,49 +15,37 @@
  *
  ******************************************************************************/
 
-#ifndef _LEDCONTROL_H_
-#define _LEDCONTROL_H_
+#ifndef _ZIGBEEDEFINE_H_
+#define _ZIGBEEDEFINE_H_
+
 
 
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "app/framework/include/af.h"
-
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+#define HcEndpointDefault 1
 
-typedef enum{
-	ledColorOff = 0,
-	ledColorBlue = 1,
-	ledColorRed = 2,
-	ledColorPink = 3,
-}ledColor_enum;
+#define zbLightEp 	1
+#define zbLightSwEp 2
+#define zbPirEp		3
+#define zbLuxEp		4
 
 
-typedef enum{
-	ledStateOn = 0,
-	ledStateOff = 1,
-	ledStateBlink = 2,
-}ledControlState_enum;
+/* Define state of Device, check ZoneStatus attribute bit map for more detail */
+#define PIR_NO_MOTION                   (0x0000)
+#ifdef FOR_ZIPATO_HC
+#define PIR_MOTION_DETECTED             (0x0003) // alarmed
+#else
+#define PIR_MOTION_DETECTED             (0x0003) // alarmed
+#endif
+#define PIR_NOT_STABLE                  (0x0080) // AC fault
+#define PIR_CHECKING                    (0xffff)
 
-typedef struct{
-	int8u LedColor;
-	int8u LedControlState;
-	int8u TimeDelayBlink;
-	int8u BlinkTimes;
-	int8u LastState;
-}ledParam_str;
 
-typedef enum{
-	ledLastStateOff = 0,
-	ledLastStateRed = 1,
-	ledLastStateBlue = 2,
-	ledLastStatePink = 3,
-	ledLastStateRefresh = 4,
-}ledLastState_enum;
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -66,29 +53,10 @@ typedef enum{
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-extern int8u currentLedColor;
+extern int8u gHcEndpoint;
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void ledTurnOn(int8u color);
-void ledTurnOff(void);
-void ledBlink(int8u color,
-				int8u timeDelay,
-				int8u times,
-				int8u lastState);
-
-void ledResponseCallbackInit(void);
-void ledGetState(void);
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
 
 /**
  * @func
@@ -111,4 +79,15 @@ void ledGetState(void);
  * @retval None
  */
 
-#endif /* 1_SOURCECODE_1_MID_LEDCONTROL_LEDCONTROL_H_ */
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+
+#endif /* 1_SOURCECODE_0_APP_PREAPP_ZIGBEEUTILITY_ZIGBEEDEFINE_H_ */

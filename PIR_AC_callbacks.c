@@ -34,40 +34,9 @@
 //{
 //}
 
-/** @brief Pre ZDO Message Received
- *
- * This function passes the application an incoming ZDO message and gives the
- * appictation the opportunity to handle it. By default, this callback returns
- * false indicating that the incoming ZDO message has not been handled and
- * should be handled by the Application Framework.
- *
- * @param emberNodeId   Ver.: always
- * @param apsFrame   Ver.: always
- * @param message   Ver.: always
- * @param length   Ver.: always
- */
-boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
-                                             EmberApsFrame* apsFrame,
-                                             int8u* message,
-                                             int16u length)
-{
-  return false;
-}
 
-/** @brief Stack Status
- *
- * This function is called by the application framework from the stack status
- * handler.  This callbacks provides applications an opportunity to be notified
- * of changes to the stack status and take appropriate action.  The return code
- * from this callback is ignored by the framework.  The framework will always
- * process the stack status after the callback returns.
- *
- * @param status   Ver.: always
- */
-boolean emberAfStackStatusCallback(EmberStatus status)
-{
-  return false;
-}
+
+
 
 /** @brief Main Tick
  *

@@ -26,6 +26,7 @@
 #include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "1_SourceCode/CustomLib/macro.h"
 #include "hal/micro/serial.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -109,11 +110,12 @@ void emberAfMainInitCallback(void)
 	uartCmdParseInit(uartInitData);
 
 	zbSendInit();
+	zigbeeLeaveByButtonInit();
 
 	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
+	emberEventControlSetDelayMS(nwkJoinEventControl,1000); //
 
-
-	emberEventControlSetDelayMS(TestEventControl, 1000);
+//	emberEventControlSetDelayMS(TestEventControl, 1000);
 }
 
 

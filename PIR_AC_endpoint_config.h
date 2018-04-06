@@ -74,6 +74,7 @@
 PGM EmberAfGenericClusterFunction emberAfFuncArrayIdentifyClusterServer[] = { (EmberAfGenericClusterFunction)emberAfIdentifyClusterServerInitCallback,(EmberAfGenericClusterFunction)emberAfIdentifyClusterServerAttributeChangedCallback}; \
 PGM EmberAfGenericClusterFunction emberAfFuncArrayGroupsClusterServer[] = { (EmberAfGenericClusterFunction)emberAfGroupsClusterServerInitCallback}; \
 PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (EmberAfGenericClusterFunction)emberAfScenesClusterServerInitCallback}; \
+PGM EmberAfGenericClusterFunction emberAfFuncArrayIllumMeasurementClusterServer[] = { (EmberAfGenericClusterFunction)emberAfIllumMeasurementClusterServerAttributeChangedCallback}; \
 
 
 // Clusters defitions
@@ -95,7 +96,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
     { 0x0000, (EmberAfAttributeMetadata*)&(generatedAttributes[0]), 9, 0, (CLUSTER_MASK_SERVER), NULL,  },    \
     { 0x0003, (EmberAfAttributeMetadata*)&(generatedAttributes[9]), 1, 2, (CLUSTER_MASK_CLIENT), NULL,  },    \
     { 0x0003, (EmberAfAttributeMetadata*)&(generatedAttributes[10]), 2, 4, (CLUSTER_MASK_SERVER| CLUSTER_MASK_INIT_FUNCTION| CLUSTER_MASK_ATTRIBUTE_CHANGED_FUNCTION), emberAfFuncArrayIdentifyClusterServer, },    \
-    { 0x0400, (EmberAfAttributeMetadata*)&(generatedAttributes[23]), 4, 8, (CLUSTER_MASK_SERVER), NULL,  },    \
+    { 0x0400, (EmberAfAttributeMetadata*)&(generatedAttributes[23]), 4, 8, (CLUSTER_MASK_SERVER| CLUSTER_MASK_ATTRIBUTE_CHANGED_FUNCTION), emberAfFuncArrayIllumMeasurementClusterServer, },    \
   }
 
 
@@ -180,8 +181,14 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   extern void emberAfPluginReportingTickEventHandler(void); \
   extern void emberAfPluginScanDispatchScanEventHandler(void); \
   extern EmberEventControl TestEventControl; \
+  extern EmberEventControl checkHcConnectEventControl; \
+  extern EmberEventControl nwkJoinEventControl; \
+  extern EmberEventControl nwkLeaveEventControl; \
   extern EmberEventControl uartGetCmdEventControl; \
   extern void TestEventFunction(void); \
+  extern void checkHcConnectEventFunction(void); \
+  extern void nwkJoinEventFunction(void); \
+  extern void nwkLeaveEventFunction(void); \
   extern void uartGetCmdEventFunction(void); \
   static void clusterTickWrapper(EmberEventControl *control, EmberAfTickFunction callback, uint8_t endpoint) \
   { \
@@ -208,6 +215,9 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   { &emberAfPluginReportingTickEventControl, emberAfPluginReportingTickEventHandler }, \
   { &emberAfPluginScanDispatchScanEventControl, emberAfPluginScanDispatchScanEventHandler }, \
   { &TestEventControl, TestEventFunction }, \
+  { &checkHcConnectEventControl, checkHcConnectEventFunction }, \
+  { &nwkJoinEventControl, nwkJoinEventFunction }, \
+  { &nwkLeaveEventControl, nwkLeaveEventFunction }, \
   { &uartGetCmdEventControl, uartGetCmdEventFunction }, \
 
 
@@ -222,6 +232,9 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayScenesClusterServer[] = { (Emb
   "Reporting Plugin Tick",  \
   "Scan Dispatch Plugin Scan",  \
   "Test Custom",  \
+  "checkHcConnect Custom",  \
+  "nwkJoin Custom",  \
+  "nwkLeave Custom",  \
   "uartGetCmd Custom",  \
 
 
