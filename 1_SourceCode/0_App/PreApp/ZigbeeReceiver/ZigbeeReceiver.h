@@ -1,13 +1,75 @@
-/*
- * ZigbeeReceiver.h
+/*******************************************************************************
  *
- *  Created on: Mar 28, 2018
- *      Author: RocketBoy
+ * Copyright (c) 2016
+ * Lumi, JSC.
+ * All Rights Reserved
+ *
+ *
+ * Description: Include file for application
+ *
+ * Author: Thonv
+ *
+ * Last Changed By:  $Author: Thonv $
+ * Revision:         $Revision: 1.0.0.1 $
+ * Last Changed:     $Date: 2016-05-17 14:20:00 (Tue, 17 May 2016) $
+ *
+ ******************************************************************************/
+#ifndef _ZIGBEERECEIVER_H_
+#define _ZIGBEERECEIVER_H_
+
+/******************************************************************************/
+/*                              INCLUDE FILES                                 */
+/******************************************************************************/
+#include "app/framework/include/af.h"
+#include "app/framework/util/config.h"
+
+/******************************************************************************/
+/*                     EXPORTED TYPES and DEFINITIONS                         */
+/******************************************************************************/
+#define checkHcConnectTime 480  // 480QS = 120S = 2p
+/******************************************************************************/
+/*                              PRIVATE DATA                                  */
+/******************************************************************************/
+
+/******************************************************************************/
+/*                              EXPORTED DATA                                 */
+/******************************************************************************/
+
+/******************************************************************************/
+/*                            EXPORTED FUNCTIONS                              */
+/******************************************************************************/
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
  */
 
-#ifndef 1_SOURCECODE_0_APP_PREAPP_ZIGBEERECEIVER_ZIGBEERECEIVER_H_
-#define 1_SOURCECODE_0_APP_PREAPP_ZIGBEERECEIVER_ZIGBEERECEIVER_H_
 
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
 
 
 #endif /* 1_SOURCECODE_0_APP_PREAPP_ZIGBEERECEIVER_ZIGBEERECEIVER_H_ */

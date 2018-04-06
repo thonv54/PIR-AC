@@ -1,39 +1,177 @@
-/*
- * ZigbeeReceiver.c
+/******************************************************************************
  *
- *  Created on: Mar 28, 2018
- *      Author: RocketBoy
+ * Copyright (c) 2016
+ * Lumi, JSC.
+ * All Rights Reserved
+ *
+ *
+ * Description:
+ *
+ * Author: Thonv
+ *
+ * Last Changed By:  $Author: Thonv $
+ * Revision:         $Revision: 1.0.0.1 $
+ * Last Changed:     $Date: 2016-05-16 11:45:00 (Tue, 16 May 2016) $
+ *
+ ******************************************************************************/
+
+/******************************************************************************/
+/*                              INCLUDE FILES                                 */
+/******************************************************************************/
+#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
+#include "1_SourceCode/CustomLib/typedefs.h"
+#include "attribute-id.h"
+#include "cluster-id.h"
+#include "attribute-type.h"
+#include "include/ember-types.h"
+/******************************************************************************/
+/*                     EXPORTED TYPES and DEFINITIONS                         */
+/******************************************************************************/
+
+/******************************************************************************/
+/*                              PRIVATE DATA                                  */
+/******************************************************************************/
+
+EmberEventControl checkHcConnectEventControl;
+int8u checkHcConectionErrorCnt = 0;
+/******************************************************************************/
+/*                              EXPORTED DATA                                 */
+/******************************************************************************/
+
+/******************************************************************************/
+/*                            PRIVATE FUNCTIONS                               */
+/******************************************************************************/
+
+void checkHcConnectEventFunction(void);
+/******************************************************************************/
+/*                            EXPORTED FUNCTIONS                              */
+/******************************************************************************/
+/**
+ *
  */
 
+/** @brief Pre ZDO Message Received
+ *
+ * This function passes the application an incoming ZDO message and gives the
+ * appictation the opportunity to handle it. By default, this callback returns
+ * false indicating that the incoming ZDO message has not been handled and
+ * should be handled by the Application Framework.
+ *
+ * @param emberNodeId   Ver.: always
+ * @param apsFrame   Ver.: always
+ * @param message   Ver.: always
+ * @param length   Ver.: always
+ */
+boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
+		EmberApsFrame* apsFrame, int8u* message, int16u length) {
+	if (apsFrame->clusterId == ACTIVE_ENDPOINTS_RESPONSE) {
 
-//
-//#include "app/framework/include/af.h"
-//
-//
-//
-//
-//
-///** @brief Pre ZDO Message Received
-// *
-// * This function passes the application an incoming ZDO message and gives the
-// * appictation the opportunity to handle it. By default, this callback returns
-// * false indicating that the incoming ZDO message has not been handled and
-// * should be handled by the Application Framework.
-// *
-// * @param emberNodeId   Ver.: always
-// * @param apsFrame   Ver.: always
-// * @param message   Ver.: always
-// * @param length   Ver.: always
-// */
-//boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
-//                                             EmberApsFrame* apsFrame,
-//                                             int8u* message,
-//                                             int16u length)
-//{
-//  return false;
-//}
+		int8u Status;
+		int8u FirstEndpointID;
+		Status = message[1];
+		if (Status == EMBER_SUCCESS) {
+			FirstEndpointID = message[5];
+			gHcEndpoint = FirstEndpointID;
+		}
+		checkHcConectionErrorCnt = 0;
+
+	} else if (apsFrame->clusterId == SIMPLE_DESCRIPTOR_RESPONSE) {
+
+	} else if (apsFrame->clusterId == LEAVE_REQUEST) {
+
+	} else if (apsFrame->clusterId == END_DEVICE_BIND_RESPONSE) {
+
+	}
+	return FALSE;
+}
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void checkHcConnectEventFunction(void){
+	emberEventControlSetInactive(nwkLeaveEventControl);
+	emberEventControlSetDelayQS(nwkLeaveEventControl,checkHcConnectTime);
+	checkHcConectionErrorCnt ++;
+	if(checkHcConectionErrorCnt >= 10){
+		halReboot(); // neu 10 lan loi lien tiep // cho reset.
+	}
+}
+
+/** @brief Illuminance Measurement Cluster Server Attribute Changed
+ *
+ * Server Attribute Changed
+ *
+ * @param endpoint Endpoint that is being initialized  Ver.: always
+ * @param attributeId Attribute that changed  Ver.: always
+ */
+void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint,
+                                                                  EmberAfAttributeId attributeId){
+	int16u value;
+	if(attributeId == ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID){
+		emberAfReadServerAttribute(endpoint,
+				ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
+				ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID,
+				(int8u*)&value,
+				sizeof(value));
+		uartSendCommand(leSetupLightThressCmd,CMD_TYPE_SETUP,CMD_ID_LIGHT_THRES,(int8u*)&value);
+	}
+	else if(attributeId == ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID){
+		emberAfReadServerAttribute(endpoint,
+				ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
+				ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID,
+				(int8u*)&value,
+				sizeof(value));
+		uartSendCommand(leSetupTimeThressCmd,CMD_TYPE_SETUP,CMD_ID_TIMEOUT,(int8u*)&value);
+
+	}
+}
 
 
+/** @brief On/off Cluster Off
+ *
+ *
+ *
+ */
+boolean emberAfOnOffClusterOffCallback(void)
+{
+	int8u relayState = rlOffState;
+	boolean value = 0;
+	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
+	zbSendRelayState(value);
 
+	return FALSE;
+}
 
+/** @brief On/off Cluster Toggle
+ *
+ *
+ *
+ */
+boolean emberAfOnOffClusterToggleCallback(void)
+{
+  return FALSE;
+}
 
+/** @brief On/off Cluster On
+ *
+ *
+ *
+ */
+boolean emberAfOnOffClusterOnCallback(void)
+{
+	int8u relayState = rlOnState;
+	boolean value = 1;
+	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
+	zbSendRelayState(value);
+    return FALSE;
+}
