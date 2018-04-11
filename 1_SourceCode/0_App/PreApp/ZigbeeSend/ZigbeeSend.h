@@ -46,10 +46,10 @@ void zbSendRelayState(boolean State);
 void zbSendPirState(boolean State);
 void zbSendLuxValue(int16u Value);
 void zbSendLightThress(int16u Value);
-void zbSendPirTimeout(int16u Value);
+void zbSendPirTimeout(int32u Value);
 void zbSendBasicModelAttributeResponse(void);
 void zbSendBasicManufacturerAttributeResponse(void);
-
+void ZbSendZdoGetHcActiveEndpoint(void);
 
 /**
  * @func

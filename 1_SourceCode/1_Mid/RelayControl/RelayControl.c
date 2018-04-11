@@ -27,7 +27,7 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
+//#define  DebugRelayControl
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -46,6 +46,7 @@ void errorMidRelayCallbackPrint(void);
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 void relayCallbackInit(typeRelayCallback relayCallback);
+void relayGetState(void);
 
 
 void relayCallbackInit(typeRelayCallback relayCallback){
@@ -74,6 +75,9 @@ void relayHandler(int8u *data){
 	}
 	if(pvRelayCallback != NULL){
 		pvRelayCallback(gRelay.relayCurrentState);
+#ifdef DebugRelayControl
+	emberSerialPrintf(APP_SERIAL,"    pvRelayCallback \n\r");
+#endif
 	}
 	else{
 		errorMidRelayCallbackPrint();
@@ -105,7 +109,10 @@ void errorMidRelayCallbackPrint(void){
  *
  * @retval None
  */
-
+void relayGetState(void){
+	cmdParseRelayCallbackInit(relayHandler);
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_RELAY,NULL);
+}
 /**
  * @func
  *

@@ -49,6 +49,7 @@ extern RelayData_str gRelay;
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 void relayCallbackInit(typeRelayCallback relayCallback);
+void relayGetState(void);
 /**
  * @func
  *

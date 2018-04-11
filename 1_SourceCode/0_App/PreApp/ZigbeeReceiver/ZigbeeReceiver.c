@@ -36,8 +36,7 @@
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 
-EmberEventControl checkHcConnectEventControl;
-int8u checkHcConectionErrorCnt = 0;
+
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
@@ -46,7 +45,7 @@ int8u checkHcConectionErrorCnt = 0;
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 
-void checkHcConnectEventFunction(void);
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -89,23 +88,7 @@ boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
 	return FALSE;
 }
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-void checkHcConnectEventFunction(void){
-	emberEventControlSetInactive(nwkLeaveEventControl);
-	emberEventControlSetDelayQS(nwkLeaveEventControl,checkHcConnectTime);
-	checkHcConectionErrorCnt ++;
-	if(checkHcConectionErrorCnt >= 10){
-		halReboot(); // neu 10 lan loi lien tiep // cho reset.
-	}
-}
+
 
 /** @brief Illuminance Measurement Cluster Server Attribute Changed
  *
@@ -149,7 +132,7 @@ boolean emberAfOnOffClusterOffCallback(void)
 	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
 	zbSendRelayState(value);
 
-	return FALSE;
+	return TRUE;
 }
 
 /** @brief On/off Cluster Toggle
@@ -173,5 +156,5 @@ boolean emberAfOnOffClusterOnCallback(void)
 	boolean value = 1;
 	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
 	zbSendRelayState(value);
-    return FALSE;
+    return TRUE;
 }

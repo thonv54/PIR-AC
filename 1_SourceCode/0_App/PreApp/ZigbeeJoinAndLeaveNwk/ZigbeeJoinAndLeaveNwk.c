@@ -19,19 +19,23 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/1_Mid/LedControl/LedControl.h"
+#include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
+#include "1_SourceCode/1_Mid/Sensor/Sensor.h"
 #include "include/ember-types.h"
 #include "zigbee-framework/zigbee-device-common.h"
 #include "1_SourceCode/CustomLib/macro.h"
 #include "include/error-def.h"
 #include "stdbool.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "PIR_AC.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
+EmberEventControl checkHcConnectEventControl;
+int8u checkHcConectionErrorCnt = 0;
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -49,6 +53,7 @@ EmberEventControl nwkJoinEventControl;
 void nwkJoinEventFunction(void);
 void nwkLeaveEventFunction(void);
 void zigbeeLeaveNwkByButtonPress(int8u buttonState);
+void checkHcConnectEventFunction(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -80,11 +85,10 @@ void zigbeeLeaveByButtonInit(void) {
 void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 	switch(buttonState){
 	case stHold5s:         // neu nhan giu den 5s --> led sang hong
-		ledGetState();     // lay trang thai led
 		ledTurnOn(ledColorPink);
 		break;
 	case rlHold5s:
-		int8u NetworkStatus = emberAfNetworkState();
+		EmberNetworkStatus NetworkStatus = emberAfNetworkState();
 		if ((NetworkStatus == EMBER_JOINED_NETWORK)
 				|| (NetworkStatus == EMBER_JOINED_NETWORK_NO_PARENT)) {
 			//send leave response
@@ -92,38 +96,29 @@ void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 			contents[0] = 0x00;
 			(void) emberSendZigDevRequest(0x0000, LEAVE_RESPONSE,
 					EMBER_AF_DEFAULT_APS_OPTIONS, contents, sizeof(contents));
-			// refreshled
-			switch(currentLedColor){
-			case ledColorBlue:
-			case ledColorPink:
-			case ledColorRed:
-				ledTurnOn(currentLedColor);
-				break;
-			case ledColorOff:
-				ledTurnOff();
-				break;
-			}
+			// refreshled by relay state
 			emberLeaveNetwork();
 			emberClearBindingTable();
 		}
 		// neu thiet bi khong trong mang - reset luon
 		else {
-
-			ledBlink(ledColorPink,400,2,ledLastStateRefresh);
+			if(gRelay.relayCurrentState == boolRlOn){
+				ledBlink(ledColorPink,4,2,ledLastStateBlue);
+			}
+			else{
+				ledBlink(ledColorPink,4,2,ledLastStateBlue);
+			}
 			emberEventControlSetInactive(nwkLeaveEventControl);
 			emberEventControlSetDelayMS(nwkLeaveEventControl, 1000);
 		}
 		break;
 	default:		// neu chuyen sang bat ki trang thai nao khac -- > led resfresh
-		switch(currentLedColor){
-		case ledColorBlue:
-		case ledColorPink:
-		case ledColorRed:
-			ledTurnOn(currentLedColor);
-			break;
-		case ledColorOff:
-			ledTurnOff();
-			break;
+
+		if(gRelay.relayCurrentState == boolRlOn){
+			ledTurnOn(ledColorBlue);
+		}
+		else{
+			ledTurnOn(ledColorRed);
 		}
 		break;
 	}
@@ -153,13 +148,17 @@ void nwkJoinEventFunction(void) {
 
 	NetworkStatus = emberAfNetworkState();
 	if (NetworkStatus == EMBER_NO_NETWORK) {
-
-
+		if(gRelay.relayCurrentState == boolRlOn){
+			ledBlink(ledColorRed,4,1,ledLastStateBlue);
+		}
+		else{
+			ledBlink(ledColorRed,4,1,ledLastStateRed);
+		}
 			emberSetTxPowerMode(EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER);
 			emberAfStartSearchForJoinableNetwork();
 			emberEventControlSetInactive(nwkJoinEventControl);
 			emberEventControlSetDelayMS(nwkJoinEventControl,
-							   5000 + ((int8u)halCommonGetRandom() << 5)); // 5s + random 8s
+							   2000 + ((int8u)halCommonGetRandom() << 5)); // 2s + random 8s
 
 	}
 	else if (NetworkStatus == EMBER_JOINED_NETWORK) {
@@ -168,10 +167,15 @@ void nwkJoinEventFunction(void) {
 //		ledBlink(ledColorPink,400,2,ledLastStateRefresh);
 		emberEventControlSetInactive(nwkJoinEventControl);
 
-//		// neu vao mang, gui trang thai theo chu ki 4 phut 1 lan
-//		emberEventControlSetInactive(SendDeviceStatusEventControl);
-//		emberEventControlSetDelayQS(SendDeviceStatusEventControl,
-//								 ((int8u) halCommonGetRandom() << 2));
+		// neu vao mang, gui trang thai theo chu ki 4 phut 1 lan
+		emberEventControlSetInactive(checkHcConnectEventControl);
+		emberEventControlSetDelayMS(checkHcConnectEventControl,
+								 halCommonGetRandom());
+		// hoi Lux
+		getLuxValue();
+		relayGetState();
+		getPirState();
+
 	}
 }
 
@@ -205,13 +209,23 @@ boolean emberAfStackStatusCallback(EmberStatus status)
 	if(status == EMBER_NETWORK_DOWN){
 		int8u NetworkStatus = emberAfNetworkState();
 		if (NetworkStatus == EMBER_NO_NETWORK){
-			ledBlink(ledColorPink,400,2,ledLastStateRefresh);
+			if(gRelay.relayCurrentState == boolRlOn){
+				ledBlink(ledColorPink,4,2,ledLastStateBlue);
+			}
+			else{
+				ledBlink(ledColorPink,4,2,ledLastStateRed);
+			}
 			emberEventControlSetInactive(nwkLeaveEventControl);
 			emberEventControlSetDelayMS(nwkLeaveEventControl,1000);
 		}
 	}
 	else if(status == EMBER_NETWORK_UP){
-		ledBlink(ledColorPink,400,3,ledLastStateRefresh);
+		if(gRelay.relayCurrentState == boolRlOn){
+			ledBlink(ledColorPink,4,3,ledLastStateBlue);
+		}
+		else{
+			ledBlink(ledColorPink,4,3,ledLastStateRed);
+		}
 	   // gui ngay thong tin model cua thiet bi, du sao thi HC cung hoi nen khong can gui cung duoc
 		zbSendBasicModelAttributeResponse();
 	}
@@ -230,10 +244,32 @@ boolean emberAfStackStatusCallback(EmberStatus status)
  */
 
 void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
+
                                                EmberEUI64 longId,
                                                uint8_t cost)
 {
 	if(source == 0x0000){
-		getLuxValue();
+		emberEventControlSetInactive(checkHcConnectEventControl);
+		emberEventControlSetDelayMS(checkHcConnectEventControl,halCommonGetRandom()>>4); // random 4s
+	}
+}
+
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void checkHcConnectEventFunction(void){
+	emberEventControlSetInactive(checkHcConnectEventControl);
+	emberEventControlSetDelayQS(checkHcConnectEventControl,checkHcConnectTime);
+	ZbSendZdoGetHcActiveEndpoint();
+	checkHcConectionErrorCnt ++;
+	if(checkHcConectionErrorCnt >= 10){
+		halReboot(); // neu 10 lan loi lien tiep // cho reset.
 	}
 }

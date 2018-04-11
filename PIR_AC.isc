@@ -323,7 +323,6 @@ enable,SCENES_CLUSTER
 {setupId:hwConfig
 featureLevel=1
 active=true
-lastHwConfFileUsed=PATH(STACK_RELATIVE):app/builder/PIR_AC/brd4300b_efr32mg1p132f256gm48.hwconf
 }
 {setupId:information
 }

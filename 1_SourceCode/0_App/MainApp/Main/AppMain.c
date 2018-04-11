@@ -113,6 +113,7 @@ void emberAfMainInitCallback(void)
 	zigbeeLeaveByButtonInit();
 
 	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
+
 	emberEventControlSetDelayMS(nwkJoinEventControl,1000); //
 
 //	emberEventControlSetDelayMS(TestEventControl, 1000);
