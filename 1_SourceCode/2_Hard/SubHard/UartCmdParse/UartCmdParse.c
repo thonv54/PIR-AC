@@ -29,7 +29,7 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
+//#define  DebugCmdParse
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -37,6 +37,7 @@
 typeGetButtonCallback pvGetButtonCallback;
 typeGetSensorCallback pvGetSensorCallback;
 typeGetRelayCallback  pvGetRelayCallback;
+typeGetLedCallback	  pvGetLedCallback;
 
 
 /******************************************************************************/
@@ -80,6 +81,13 @@ void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback){
 		pvGetRelayCallback = getRelayCallback;
 	}
 }
+
+
+void cmdParseLedCallbackInit(typeGetLedCallback  getLedCallback){
+	if(getLedCallback != NULL){
+		pvGetLedCallback = getLedCallback;
+	}
+}
 void uartCmdParseInit(uartDriverInitData_str uartDriverInitData){
 	if(uartDriverInitData.GetDataCallback == NULL){
 		uartDriverInitData.GetDataCallback = GetDataHandler;      // neu tang tren khong Handler, thu se Handler o tang nay
@@ -108,6 +116,9 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_BUTTON:
 			if(pvGetButtonCallback != NULL){
 				pvGetButtonCallback(data);
+#ifdef DebugCmdParse
+	emberSerialPrintf(APP_SERIAL,"    pvGetButtonCallback \n\r");
+#endif
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -115,10 +126,23 @@ void GetDataHandler(int8u *data){
 			}
 			break;
 		case CMD_ID_LED:
+			if(pvGetLedCallback!= NULL){
+				pvGetLedCallback(data);
+#ifdef DebugCmdParse
+	emberSerialPrintf(APP_SERIAL,"    pvGetLedCallback \n\r");
+#endif
+			}
+			else{
+				errorUartCmdParseCallbackPrint();
+				// cb_error
+			}
 			break;
 		case CMD_ID_RELAY:
 			if(pvGetRelayCallback!= NULL){
 				pvGetRelayCallback(data);
+#ifdef DebugCmdParse
+	emberSerialPrintf(APP_SERIAL,"    pvGetRelayCallback \n\r");
+#endif
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -131,6 +155,9 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_TIMEOUT:
 			if(pvGetSensorCallback != NULL){
 				pvGetSensorCallback(data);
+#ifdef DebugCmdParse
+	emberSerialPrintf(APP_SERIAL,"    pvGetSensorCallback \n\r");
+#endif
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -158,7 +185,9 @@ void GetDataHandler(int8u *data){
  * @retval None
  */
 void errorUartCmdParseCallbackPrint(void){
+#ifdef DebugCmdParse
 	emberSerialPrintf(APP_SERIAL,"    CallbackInUartCmdParseError \n\r");
+#endif
 }
 /**
  * @func

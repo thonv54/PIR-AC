@@ -380,11 +380,11 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
           <state>$PROJ_DIR$\1_SourceCode</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>
@@ -712,11 +712,11 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
           <state>$PROJ_DIR$\1_SourceCode</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
-          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32\rf\common\cortex</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\chip\efr32</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
+          <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
 
         </option>
         <option>
@@ -1229,7 +1229,7 @@
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeJoinAndLeaveNwk\ZigbeeJoinAndLeaveNwk.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeReceiver\ZigbeeReceiver.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeSend\ZigbeeSend.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\Button.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\MidButton.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\LedControl\LedControl.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\RelayControl\RelayControl.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Sensor\Sensor.c</name></file>
@@ -1265,7 +1265,6 @@
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\identify-feedback\identify-feedback.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\network-find\network-find.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\network-find\network-find-cli.c</name></file>
-<file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\on-off\on-off.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\reporting\reporting.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\reporting\reporting-cli.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\reporting\reporting-default-configuration.c</name></file>

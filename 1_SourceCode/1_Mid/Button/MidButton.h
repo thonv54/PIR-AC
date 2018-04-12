@@ -24,14 +24,33 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
+#include "app/framework/include/af.h"
+#include "app/framework/util/config.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+typedef enum{
+	stPress = 0,    // bat dau nhan nut
+	stHold3s = 1,	// thoi diem giu toi 3s
+	stHold5s = 2,
+	stHold10s = 3,
+	rlPress  = 4,
+	rlHold3s = 5,
+	rlHold5s = 6,
+	rlHold10s = 7,
+	Press2 = 8,
+	Press3 = 9,
+	Press4 = 10,
+	Press5 = 11,
+	PressManyTime = 12,
+}buttonState_enum;
 
-//typedef void (*typeButtonHold10sCallback)(char data);
-//typedef void (*typeButtonHold3sCallback)(char data);
-typedef void (*typeButtonHold5sCallback)(char data);
-typedef void (*typeButtonPressCallback)(char data);
+
+
+//typedef void (*typeButtonHold10sCallback)(int8u data);
+//typedef void (*typeButtonHold3sCallback)(int8u data);
+typedef void (*typeButtonHold5sCallback)(int8u data);
+typedef void (*typeButtonPressCallback)(int8u data);
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/

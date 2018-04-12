@@ -87,12 +87,18 @@ Platform:efr32~family[M]~series[1]~device_configuration[1]~performance[P]~radio[
 ExactArchitectureToolchain:com.silabs.ss.tool.ide.arm.toolchain.iar:7.80.2.11947
 
 #  Enable callbacks.
-Callbacks:emberAfMainInitCallback,emberAfPreZDOMessageReceivedCallback,emberAfStackStatusCallback,emberAfMainTickCallback,
+Callbacks:emberAfMainInitCallback,emberAfPreZDOMessageReceivedCallback,emberAfStackStatusCallback,emberAfMainTickCallback,emberAfIllumMeasurementClusterServerAttributeChangedCallback,emberAfOnOffClusterOffCallback,emberAfOnOffClusterToggleCallback,emberAfOnOffClusterOnCallback,
 
 #  Any customer-specific general purpose custom events.
 CustomEvents:uartGetCmdEventControl,uartGetCmdEventFunction
 
 CustomEvents:TestEventControl,TestEventFunction
+
+CustomEvents:nwkJoinEventControl,nwkJoinEventFunction
+
+CustomEvents:nwkLeaveEventControl,nwkLeaveEventFunction
+
+CustomEvents:checkHcConnectEventControl,checkHcConnectEventFunction
 
 #  If bindings are enabled then this is the maximum number of supported
 #  bindings.
@@ -261,7 +267,7 @@ PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/MainApp/Main/AppMain.
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.c
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.c
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.c
-PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/Button/Button.c
+PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/Button/MidButton.c
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/LedControl/LedControl.c
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/RelayControl/RelayControl.c
 PATH(STACK_RELATIVE):app/builder/PIR_AC/1_SourceCode/1_Mid/Sensor/Sensor.c
@@ -317,7 +323,6 @@ enable,SCENES_CLUSTER
 {setupId:hwConfig
 featureLevel=1
 active=true
-lastHwConfFileUsed=PATH(STACK_RELATIVE):app/builder/PIR_AC/brd4300b_efr32mg1p132f256gm48.hwconf
 }
 {setupId:information
 }
@@ -597,7 +602,7 @@ appPlugin:network-find,true
 
 appPlugin:network-steering,false
 
-appPlugin:on-off,true
+appPlugin:on-off,false
 
 appPlugin:ota-bootload,true
 

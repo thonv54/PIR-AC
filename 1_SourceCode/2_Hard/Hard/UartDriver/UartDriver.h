@@ -95,6 +95,9 @@ typedef enum{
 #define	leUpdateTimeoutCmd 		 	 6
 #define	leSetupLedCmd 		 		 9
 #define	leSetupRelayCmd      		 5
+#define leSetupLightThressCmd		 6
+#define leSetupTimeThressCmd		 6
+#define leRequestCmd				 4
 
 
 

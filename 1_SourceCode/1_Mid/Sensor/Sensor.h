@@ -33,7 +33,7 @@ typedef struct {
 	boolean pirLastState;
 	int16u luxValue;
 	int16u lightThress;
-	int16u pirTimeout;
+	int32u pirTimeout;
 }sensorData_str;
 
 typedef enum{
@@ -45,7 +45,7 @@ typedef enum{
 typedef void (*typeSensorPirCallback)(boolean state);
 typedef void (*typeSensorLuxValueCallback)(int16u value);
 typedef void (*typeSensorLightThressCallback)(int16u value);
-typedef void (*typeSensorPirTimeoutCallback)(int16u value);
+typedef void (*typeSensorPirTimeoutCallback)(int32u value);
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -61,6 +61,8 @@ void sensorPirCallbackInit(typeSensorPirCallback sensorPirCallback);
 void sensorLuxvalueCallbackInit(typeSensorLuxValueCallback sensorLuxValueCallback);
 void sensorLightThressCallbackInit(typeSensorLightThressCallback SensorLightThressCallback );
 void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutCallback);
+void getLuxValue(void);
+void getPirState(void);
 /**
  * @func
  *

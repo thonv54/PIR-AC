@@ -36,6 +36,7 @@
 typedef void (*typeGetButtonCallback)(int8u *data);
 typedef void (*typeGetSensorCallback)(int8u *data);
 typedef void (*typeGetRelayCallback)(int8u *data);
+typedef void (*typeGetLedCallback)(int8u *data);
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -53,6 +54,8 @@ void uartCmdParseInit(uartDriverInitData_str uartDriverInitData);
 void cmdParseButtonCallbackInit(typeGetButtonCallback getButtonCallback);
 void cmdParseSensorCallbackInit(typeGetSensorCallback getSensorCallback);
 void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback);
+void cmdParseLedCallbackInit(typeGetLedCallback  getLedCallback);
+
 
 /**
  * @func
