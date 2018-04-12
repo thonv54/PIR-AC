@@ -25,7 +25,7 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
+//#define  DebugSensor
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -102,7 +102,7 @@ void pvSensorHandle(int8u *data){
 	int8u cmdType = data[1];
 	int8u cmdId = data[2];
 
-	if(cmdType == CMD_TYPE_UPDATE){
+	if((cmdType == CMD_TYPE_UPDATE) || (cmdType == CMD_TYPE_RESPONSE)){
 		switch (cmdId){
 		case CMD_ID_PIR:
 			int8u pirState = data[3];
@@ -114,33 +114,45 @@ void pvSensorHandle(int8u *data){
 			}
 			if(pvSensorPirCallback != NULL){
 				pvSensorPirCallback(gSensor.pirCurrentState);
+#ifdef DebugSensor
+	emberSerialPrintf(APP_SERIAL,"    pvSensorPirCallback  \n\r");
+#endif
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LUX:
-			gSensor.luxValue = data[3];
+			gSensor.luxValue = (((int16u)data[3]<< 8) | (data[4])) ;
 			if(pvSensorLuxValueCallback != NULL){
 				pvSensorLuxValueCallback(gSensor.luxValue);
+#ifdef DebugSensor
+	emberSerialPrintf(APP_SERIAL,"    pvSensorLuxValueCallback  \n\r");
+#endif
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LIGHT_THRES:
-			gSensor.lightThress = data[3];
+			gSensor.lightThress = (((int16u)data[3]<< 8) | (data[4]));
 			if(pvSensorLightThressCallback != NULL){
 				pvSensorLightThressCallback(gSensor.lightThress);
+#ifdef DebugSensor
+	emberSerialPrintf(APP_SERIAL,"    pvSensorLightThressCallback  \n\r");
+#endif
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;;
 		case CMD_ID_TIMEOUT:
-			gSensor.pirTimeout = data[3];
+			gSensor.pirTimeout = (((int32u)data[3]<< 24) | ((int32u)data[4]<<16) | ((int32u)data[5]<< 8) | data[6]);
 			if(pvSensorPirTimeoutCallback != NULL){
 				pvSensorPirTimeoutCallback(gSensor.pirTimeout);
+#ifdef DebugSensor
+	emberSerialPrintf(APP_SERIAL,"    pvSensorPirTimeoutCallback  \n\r");
+#endif
 			}
 			else{
 				errorMidSensorCallbackPrint();
@@ -148,25 +160,6 @@ void pvSensorHandle(int8u *data){
 			break;
 		default:
 			break;
-		}
-	}
-	else if(cmdType == CMD_TYPE_RESPONSE){
-		if(cmdId == CMD_ID_PIR){
-			int8u pirState = data[3];
-			if(pirState == pirMotion){
-				gSensor.pirCurrentState = boolPirMotion;
-			}
-			else if(pirState == pirNoMotion){
-				gSensor.pirCurrentState = boolPirNoMotion;
-			}
-			if(gSensor.pirLastState != gSensor.pirCurrentState){
-				if(pvSensorPirCallback != NULL){
-					pvSensorPirCallback(gSensor.pirCurrentState);
-				}
-				else{
-					errorMidSensorCallbackPrint();
-				}
-			}
 		}
 	}
 	gSensor.pirLastState = gSensor.pirCurrentState;
@@ -196,5 +189,16 @@ void errorMidSensorCallbackPrint(void){
 void getLuxValue(void){
 	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LUX,NULL);
 }
-
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+void getPirState(void){
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_PIR,NULL);
+}
 

@@ -1229,7 +1229,7 @@
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeJoinAndLeaveNwk\ZigbeeJoinAndLeaveNwk.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeReceiver\ZigbeeReceiver.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeSend\ZigbeeSend.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\Button.c</name></file>
+<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\MidButton.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\LedControl\LedControl.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\RelayControl\RelayControl.c</name></file>
 <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Sensor\Sensor.c</name></file>

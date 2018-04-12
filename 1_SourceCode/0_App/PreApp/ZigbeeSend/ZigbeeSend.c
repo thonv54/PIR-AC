@@ -23,7 +23,11 @@
 #include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
 #include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
 #include "1_SourceCode/1_Mid/Sensor/Sensor.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
 #include "1_SourceCode/CustomLib/macro.h"
+#include "app/util/zigbee-framework/zigbee-device-common.h"
+#include "app/framework/util/config.h"
 #include "cluster-id.h"
 #include "attribute-id.h"
 #include "attribute-type.h"
@@ -71,12 +75,17 @@ void zbSendRelayState(boolean State);
 void zbSendPirState(boolean State);
 void zbSendLuxValue(int16u Value);
 void zbSendLightThress(int16u Value);
-void zbSendPirTimeout(int16u Value);
+void zbSendPirTimeout(int32u Value);
+void ZbSendZdoGetHcActiveEndpoint(void);
 void zbSendInit(void);
 
 
 /******************************************************************************/
 
+
+void ZbSendZdoGetHcActiveEndpoint(void) {
+    emberActiveEndpointsRequest(0x000, EMBER_AF_DEFAULT_APS_OPTIONS | 0x0040);
+}
 /**
  * @func
  *
@@ -104,6 +113,16 @@ void zbSendInit(void){
  * @retval None
  */
 void zbSendRelayState(boolean State){
+//	switch(State){
+//	case 0:
+//		ledTurnOn(ledColorRed);
+//		break;
+//	case 1:
+//		ledTurnOn(ledColorBlue);
+//		break;
+//	default:
+//		break;
+//	}
 	SendGlobalServerToClientReadAttributeResponse(zbLightEp,
 			ZCL_ON_OFF_CLUSTER_ID,
 			ZCL_ON_OFF_ATTRIBUTE_ID,
@@ -183,12 +202,13 @@ void zbSendLightThress(int16u Value){
  * @retval None
  */
 
-void zbSendPirTimeout(int16u Value){
+void zbSendPirTimeout(int32u Value){
+
 	SendGlobalServerToClientReadAttributeResponse(zbLuxEp,
 												ZCL_ILLUM_MEASUREMENT_CLUSTER_ID,
 												ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID,
 												(int8u*)&Value,
-												ZCL_INT16U_ATTRIBUTE_TYPE);
+												ZCL_INT32U_ATTRIBUTE_TYPE);
 }
 
 

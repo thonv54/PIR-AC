@@ -137,6 +137,13 @@ void buttonStateFromUartHandle(int8u *data){
 			}
 			break;
 		default:
+			if(pvButtonPressCallback != NULL){
+				pvButtonPressCallback(rlPress);
+			}
+			else{
+				// cb_error
+				errorMidButtonCallbackPrint();
+			}
 			break;
 		}
 		break;
