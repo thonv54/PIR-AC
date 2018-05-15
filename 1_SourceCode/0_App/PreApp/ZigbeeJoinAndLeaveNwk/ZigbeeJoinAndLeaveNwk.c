@@ -102,12 +102,7 @@ void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 		}
 		// neu thiet bi khong trong mang - reset luon
 		else {
-			if(gRelay.relayCurrentState == boolRlOn){
-				ledBlink(ledColorPink,4,2,ledLastStateBlue);
-			}
-			else{
-				ledBlink(ledColorPink,4,2,ledLastStateBlue);
-			}
+				ledBlink(ledColorPink,4,2,ledLastStateRefresh);
 			emberEventControlSetInactive(nwkLeaveEventControl);
 			emberEventControlSetDelayMS(nwkLeaveEventControl, 1000);
 		}
@@ -148,12 +143,7 @@ void nwkJoinEventFunction(void) {
 
 	NetworkStatus = emberAfNetworkState();
 	if (NetworkStatus == EMBER_NO_NETWORK) {
-		if(gRelay.relayCurrentState == boolRlOn){
-			ledBlink(ledColorRed,4,1,ledLastStateBlue);
-		}
-		else{
-			ledBlink(ledColorRed,4,1,ledLastStateRed);
-		}
+			ledBlink(ledColorRed,4,1,ledLastStateRefresh);
 			emberSetTxPowerMode(EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER);
 			emberAfStartSearchForJoinableNetwork();
 			emberEventControlSetInactive(nwkJoinEventControl);
@@ -209,23 +199,13 @@ boolean emberAfStackStatusCallback(EmberStatus status)
 	if(status == EMBER_NETWORK_DOWN){
 		int8u NetworkStatus = emberAfNetworkState();
 		if (NetworkStatus == EMBER_NO_NETWORK){
-			if(gRelay.relayCurrentState == boolRlOn){
-				ledBlink(ledColorPink,4,2,ledLastStateBlue);
-			}
-			else{
-				ledBlink(ledColorPink,4,2,ledLastStateRed);
-			}
+				ledBlink(ledColorPink,4,2,ledLastStateRefresh);
 			emberEventControlSetInactive(nwkLeaveEventControl);
 			emberEventControlSetDelayMS(nwkLeaveEventControl,1000);
 		}
 	}
 	else if(status == EMBER_NETWORK_UP){
-		if(gRelay.relayCurrentState == boolRlOn){
-			ledBlink(ledColorPink,4,3,ledLastStateBlue);
-		}
-		else{
-			ledBlink(ledColorPink,4,3,ledLastStateRed);
-		}
+			ledBlink(ledColorPink,4,3,ledLastStateRefresh);
 	   // gui ngay thong tin model cua thiet bi, du sao thi HC cung hoi nen khong can gui cung duoc
 		zbSendBasicModelAttributeResponse();
 	}
