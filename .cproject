@@ -357,7 +357,7 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule generalProj.esf.protocolIds="com.silabs.sdk.stack.super:2.1.0._310455067.com.silabs.sdk.stack.znet:6.1.0.0_-406250754" generalProj.esf.protocolNames="znet" moduleId="com.silabs.ss.framework.ide.project.core.cpp" project.generation="54" projectCommon.boardIds="brd4300b:0.0.0" projectCommon.importModeId="LINK_LIBRARIES" projectCommon.partId="mcu.arm.efr32.mg1.efr32mg1p132f256gm48" projectCommon.sdkId="com.silabs.sdk.stack.super:2.1.0._310455067"/>
+	<storageModule generalProj.esf.protocolIds="com.silabs.sdk.stack.super:2.1.0._310455067.com.silabs.sdk.stack.znet:6.1.0.0_-406250754" generalProj.esf.protocolNames="znet" moduleId="com.silabs.ss.framework.ide.project.core.cpp" project.generation="714" projectCommon.boardIds="brd4300b:0.0.0" projectCommon.importModeId="LINK_LIBRARIES" projectCommon.partId="mcu.arm.efr32.mg1.efr32mg1p132f256gm48" projectCommon.sdkId="com.silabs.sdk.stack.super:2.1.0._310455067"/>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="PIR_AC.com.silabs.ss.framework.ide.project.core.cdt.cdtMbsProjectType.1466522434" name="SLS CDT Project" projectType="com.silabs.ss.framework.ide.project.core.cdt.cdtMbsProjectType"/>
 	</storageModule>
