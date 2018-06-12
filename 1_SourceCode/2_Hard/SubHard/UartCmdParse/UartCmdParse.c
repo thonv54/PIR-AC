@@ -28,8 +28,14 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
 //#define  DebugCmdParse
+
+#ifdef DebugCmdParse
+#define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define	DBG_CMD_PARSE_PRINT(...)
+#endif
+
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -116,9 +122,9 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_BUTTON:
 			if(pvGetButtonCallback != NULL){
 				pvGetButtonCallback(data);
-#ifdef DebugCmdParse
-	emberSerialPrintf(APP_SERIAL,"    pvGetButtonCallback \n\r");
-#endif
+
+				DBG_CMD_PARSE_PRINT("    pvGetButtonCallback \n\r");
+
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -128,9 +134,9 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_LED:
 			if(pvGetLedCallback!= NULL){
 				pvGetLedCallback(data);
-#ifdef DebugCmdParse
-	emberSerialPrintf(APP_SERIAL,"    pvGetLedCallback \n\r");
-#endif
+
+				DBG_CMD_PARSE_PRINT("    pvGetLedCallback \n\r");
+
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -140,9 +146,8 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_RELAY:
 			if(pvGetRelayCallback!= NULL){
 				pvGetRelayCallback(data);
-#ifdef DebugCmdParse
-	emberSerialPrintf(APP_SERIAL,"    pvGetRelayCallback \n\r");
-#endif
+				DBG_CMD_PARSE_PRINT("    pvGetRelayCallback \n\r");
+
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -155,9 +160,7 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_TIMEOUT:
 			if(pvGetSensorCallback != NULL){
 				pvGetSensorCallback(data);
-#ifdef DebugCmdParse
-	emberSerialPrintf(APP_SERIAL,"    pvGetSensorCallback \n\r");
-#endif
+				DBG_CMD_PARSE_PRINT("    pvGetSensorCallback \n\r");
 			}
 			else{
 				errorUartCmdParseCallbackPrint();
@@ -185,9 +188,7 @@ void GetDataHandler(int8u *data){
  * @retval None
  */
 void errorUartCmdParseCallbackPrint(void){
-#ifdef DebugCmdParse
-	emberSerialPrintf(APP_SERIAL,"    CallbackInUartCmdParseError \n\r");
-#endif
+	DBG_CMD_PARSE_PRINT("    CallbackInUartCmdParseError \n\r");
 }
 /**
  * @func

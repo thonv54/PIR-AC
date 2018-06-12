@@ -31,15 +31,16 @@
 #include "cluster-id.h"
 #include "attribute-id.h"
 #include "attribute-type.h"
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+
 typedef struct {
   int16u AttributeID;
   int8u Status;
   int8u DataType;
   int8u Value[32];
-
 } EmberReadAttributeResponse_str;
 
 #define EmberReadAttributeResport_str EmberReadAttributeResponse_str
