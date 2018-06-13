@@ -18,13 +18,13 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-
-#include "app/framework/include/af.h"
+#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "app/framework/util/config.h"
 #include "1_SourceCode/CustomLib/macro.h"
 #include "serial/serial.h"
+#include "UartCmd.h"
 
-#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -40,10 +40,10 @@
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeGetButtonCallback pvGetButtonCallback;
-typeGetSensorCallback pvGetSensorCallback;
-typeGetRelayCallback  pvGetRelayCallback;
-typeGetLedCallback	  pvGetLedCallback;
+typeGetCallback g_pGetButtonCallback;
+typeGetCallback g_pGetSensorCallback;
+typeGetCallback g_pGetRelayCallback;
+typeGetCallback	g_pGetLedCallback;
 
 
 /******************************************************************************/
@@ -71,27 +71,27 @@ void errorUartCmdParseCallbackPrint(void);
  *
  * @retval None
  */
-void cmdParseButtonCallbackInit(typeGetButtonCallback getButtonCallback){
+void cmdParseButtonCallbackInit(typeGetCallback getButtonCallback){
 	if(getButtonCallback != NULL){
-		pvGetButtonCallback = getButtonCallback;
+		g_pGetButtonCallback = getButtonCallback;
 	}
 }
-void cmdParseSensorCallbackInit(typeGetSensorCallback getSensorCallback){
+void cmdParseSensorCallbackInit(typeGetCallback getSensorCallback){
 	if(getSensorCallback !=  NULL){
-		pvGetSensorCallback = getSensorCallback;
+		g_pGetSensorCallback = getSensorCallback;
 	}
 }
 
-void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback){
+void cmdParseRelayCallbackInit(typeGetCallback  getRelayCallback){
 	if(getRelayCallback != NULL){
-		pvGetRelayCallback = getRelayCallback;
+		g_pGetRelayCallback = getRelayCallback;
 	}
 }
 
 
-void cmdParseLedCallbackInit(typeGetLedCallback  getLedCallback){
+void cmdParseLedCallbackInit(typeGetCallback  getLedCallback){
 	if(getLedCallback != NULL){
-		pvGetLedCallback = getLedCallback;
+		g_pGetLedCallback = getLedCallback;
 	}
 }
 void uartCmdParseInit(uartDriverInitData_str uartDriverInitData){
@@ -110,20 +110,18 @@ void uartCmdParseInit(uartDriverInitData_str uartDriverInitData){
  * @retval None
  */
 void GetDataHandler(int8u *data){
-	int8u byPacketRxSeq = data[0];
-	int8u byPacketType  = data[1];
-	int8u byPacketCmdId = data[2];
 
+    CMD_BUFFER *cmd = (CMD_BUFFER*)data;
 
-	switch(byPacketType){
+	switch(cmd->uCommon.cmdid){
 	case CMD_TYPE_UPDATE:
 	case CMD_TYPE_RESPONSE:
-		switch(byPacketCmdId){
+		switch(cmd->uCommon.cmdtype){
 		case CMD_ID_BUTTON:
-			if(pvGetButtonCallback != NULL){
-				pvGetButtonCallback(data);
+			if(g_pGetButtonCallback != NULL){
+				g_pGetButtonCallback((int8u*)&cmd->uButtonState.state);
 
-				DBG_CMD_PARSE_PRINT("    pvGetButtonCallback \n\r");
+				DBG_CMD_PARSE_PRINT("    g_pGetButtonCallback \n\r");
 
 			}
 			else{
@@ -132,10 +130,10 @@ void GetDataHandler(int8u *data){
 			}
 			break;
 		case CMD_ID_LED:
-			if(pvGetLedCallback!= NULL){
-				pvGetLedCallback(data);
+			if(g_pGetLedCallback!= NULL){
+				g_pGetLedCallback((int8u*)&cmd->uLedState.state);
 
-				DBG_CMD_PARSE_PRINT("    pvGetLedCallback \n\r");
+				DBG_CMD_PARSE_PRINT("    g_pGetLedCallback \n\r");
 
 			}
 			else{
@@ -144,9 +142,9 @@ void GetDataHandler(int8u *data){
 			}
 			break;
 		case CMD_ID_RELAY:
-			if(pvGetRelayCallback!= NULL){
-				pvGetRelayCallback(data);
-				DBG_CMD_PARSE_PRINT("    pvGetRelayCallback \n\r");
+			if(g_pGetRelayCallback!= NULL){
+				g_pGetRelayCallback((int8u*)&cmd->uRelayState.state);
+				DBG_CMD_PARSE_PRINT("    g_pGetRelayCallback \n\r");
 
 			}
 			else{
@@ -158,9 +156,9 @@ void GetDataHandler(int8u *data){
 		case CMD_ID_LUX:
 		case CMD_ID_LIGHT_THRES:
 		case CMD_ID_TIMEOUT:
-			if(pvGetSensorCallback != NULL){
-				pvGetSensorCallback(data);
-				DBG_CMD_PARSE_PRINT("    pvGetSensorCallback \n\r");
+			if(g_pGetSensorCallback != NULL){
+				g_pGetSensorCallback(data);
+				DBG_CMD_PARSE_PRINT("    g_pGetSensorCallback \n\r");
 			}
 			else{
 				errorUartCmdParseCallbackPrint();

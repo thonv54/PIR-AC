@@ -26,17 +26,15 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+#include "app/framework/include/af.h"
+#include "UartDriver.h"
 
-#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-typedef void (*typeGetButtonCallback)(int8u *data);
-typedef void (*typeGetSensorCallback)(int8u *data);
-typedef void (*typeGetRelayCallback)(int8u *data);
-typedef void (*typeGetLedCallback)(int8u *data);
+typedef void (*typeGetCallback)(int8u *data);
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -51,10 +49,10 @@ typedef void (*typeGetLedCallback)(int8u *data);
 /******************************************************************************/
 void uartCmdParseInit(uartDriverInitData_str uartDriverInitData);
 
-void cmdParseButtonCallbackInit(typeGetButtonCallback getButtonCallback);
-void cmdParseSensorCallbackInit(typeGetSensorCallback getSensorCallback);
-void cmdParseRelayCallbackInit(typeGetRelayCallback  getRelayCallback);
-void cmdParseLedCallbackInit(typeGetLedCallback  getLedCallback);
+void cmdParseButtonCallbackInit(typeGetCallback getButtonCallback);
+void cmdParseSensorCallbackInit(typeGetCallback getSensorCallback);
+void cmdParseRelayCallbackInit(typeGetCallback  getRelayCallback);
+void cmdParseLedCallbackInit(typeGetCallback  getLedCallback);
 
 
 /**

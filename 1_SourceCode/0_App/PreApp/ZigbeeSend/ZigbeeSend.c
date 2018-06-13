@@ -18,6 +18,7 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+#include "app/framework/util/config.h"
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"

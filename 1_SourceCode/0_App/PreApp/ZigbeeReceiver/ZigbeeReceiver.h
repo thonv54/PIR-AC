@@ -21,7 +21,6 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include "app/framework/include/af.h"
-#include "app/framework/util/config.h"
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */

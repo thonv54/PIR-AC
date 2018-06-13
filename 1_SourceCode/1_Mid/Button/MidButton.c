@@ -21,11 +21,16 @@
 #include <1_SourceCode/CustomLib/macro.h>
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
+#include "UartCmd.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
+#ifdef DebugButton
+#define DBG_BUTTON_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define DBG_BUTTON_PRINT(...)
+#endif
 
 
 typedef struct{
@@ -90,9 +95,9 @@ void buttonCallbackInit(typeButtonHold5sCallback buttonHold5sCallback,
  *
  * @retval None
  */
-void buttonStateFromUartHandle(int8u *data){
+void buttonStateFromUartHandle(int8u* data){
 
-	pvButton.ButtonCurrentState = data[3];
+	pvButton.ButtonCurrentState = (int8u)*data;
 	switch(pvButton.ButtonCurrentState){
 	case BUTTON_HOLD10s:
 		break;
@@ -165,7 +170,7 @@ void buttonStateFromUartHandle(int8u *data){
  * @retval None
  */
 void errorMidButtonCallbackPrint(void){
-	emberSerialPrintf(APP_SERIAL,"    CallbackInMidButtonError \n\r");
+    DBG_BUTTON_PRINT("    CallbackInMidButtonError \n\r");
 }
 
 /**

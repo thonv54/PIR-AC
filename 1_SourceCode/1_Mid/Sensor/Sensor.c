@@ -18,15 +18,23 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/1_Mid/Sensor/Sensor.h"
+#include "app/framework/util/config.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/CustomLib/macro.h"
+#include "UartCmd.h"
+#include "1_SourceCode/1_Mid/Sensor/Sensor.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-//#define  DebugSensor
 
+
+
+#ifdef DebugSensor
+#define DBG_SENSOR_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define DBG_SENSOR_PRINT(...)
+#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -99,60 +107,56 @@ void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutC
  */
 void pvSensorHandle(int8u *data){
 
-	int8u cmdType = data[1];
-	int8u cmdId = data[2];
+    CMD_BUFFER *cmd = (CMD_BUFFER*)data;
 
-	if((cmdType == CMD_TYPE_UPDATE) || (cmdType == CMD_TYPE_RESPONSE)){
-		switch (cmdId){
+	if((cmd->uCommon.cmdtype == CMD_TYPE_UPDATE) || (cmd->uCommon.cmdtype == CMD_TYPE_RESPONSE)){
+		switch (cmd->uCommon.cmdid){
 		case CMD_ID_PIR:
-			int8u pirState = data[3];
-			if(pirState == pirMotion){
+			if(cmd->uPirState.state == PIR_STATE_MOTION){
 				gSensor.pirCurrentState = boolPirMotion;
 			}
-			else if(pirState == pirNoMotion){
+			else if(cmd->uPirState.state == PIR_STATE_NO_MOTION){
 				gSensor.pirCurrentState = boolPirNoMotion;
 			}
 			if(pvSensorPirCallback != NULL){
 				pvSensorPirCallback(gSensor.pirCurrentState);
-#ifdef DebugSensor
-	emberSerialPrintf(APP_SERIAL,"    pvSensorPirCallback  \n\r");
-#endif
+				DBG_SENSOR_PRINT("    pvSensorPirCallback  \n\r");
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LUX:
-			gSensor.luxValue = (((int16u)data[3]<< 8) | (data[4])) ;
+			gSensor.luxValue = (((int16u)cmd->uLuxData.high_byte_Lux<< 8) | (cmd->uLuxData.low_byte_Lux)) ;
 			if(pvSensorLuxValueCallback != NULL){
 				pvSensorLuxValueCallback(gSensor.luxValue);
-#ifdef DebugSensor
-	emberSerialPrintf(APP_SERIAL,"    pvSensorLuxValueCallback  \n\r");
-#endif
+
+				DBG_SENSOR_PRINT("    pvSensorLuxValueCallback  \n\r");
+
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LIGHT_THRES:
-			gSensor.lightThress = (((int16u)data[3]<< 8) | (data[4]));
+			gSensor.lightThress = (((int16u)cmd->uLightThressData.high_byte_LightThress<< 8)
+			        | (cmd->uLightThressData.low_byte_LightThress));
 			if(pvSensorLightThressCallback != NULL){
 				pvSensorLightThressCallback(gSensor.lightThress);
-#ifdef DebugSensor
-	emberSerialPrintf(APP_SERIAL,"    pvSensorLightThressCallback  \n\r");
-#endif
+				DBG_SENSOR_PRINT("    pvSensorLightThressCallback  \n\r");
 			}
 			else{
 				errorMidSensorCallbackPrint();
 			}
 			break;;
 		case CMD_ID_TIMEOUT:
-			gSensor.pirTimeout = (((int32u)data[3]<< 24) | ((int32u)data[4]<<16) | ((int32u)data[5]<< 8) | data[6]);
+			gSensor.pirTimeout = (((int32u)cmd->uTimeThressData.highest_byte_TimeThress<< 24) |
+			        ((int32u)cmd->uTimeThressData.high_byte_TimeThress<<16) |
+			        ((int32u)cmd->uTimeThressData.low_byte_TimeThress<< 8) |
+			        cmd->uTimeThressData.lowest_byte_TimeThress);
 			if(pvSensorPirTimeoutCallback != NULL){
 				pvSensorPirTimeoutCallback(gSensor.pirTimeout);
-#ifdef DebugSensor
-	emberSerialPrintf(APP_SERIAL,"    pvSensorPirTimeoutCallback  \n\r");
-#endif
+				DBG_SENSOR_PRINT("    pvSensorPirTimeoutCallback  \n\r");
 			}
 			else{
 				errorMidSensorCallbackPrint();
@@ -175,7 +179,7 @@ void pvSensorHandle(int8u *data){
  * @retval None
  */
 void errorMidSensorCallbackPrint(void){
-	emberSerialPrintf(APP_SERIAL,"    CallbackInMidSensorError \n\r");
+    DBG_SENSOR_PRINT("    CallbackInMidSensorError \n\r");
 }
 /**
  * @func

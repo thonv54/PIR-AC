@@ -29,6 +29,23 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
+
+
+#define stateSOF1   0
+#define stateSOF2   1
+#define stateLen    2
+#define stateData   3
+#define stateCheckXor   4
+
+
+#ifdef DebugUartDriver
+#define DBG_UART_DRIVER_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define	DBG_UART_DRIVER_PRINT(...)
+#endif
+
+
+
 #define PacketSOF_1 0xAA
 #define PacketSOF_2 0x55
 #define PacketACK 0x06
@@ -56,10 +73,10 @@ typedef struct{
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 
-uartRx_Str pvUartRx;
-uartDriverInitData_str pvUartDriverInitData;
+uartRx_Str g_UartRx;
+uartDriverInitData_str g_pUartDriverInitData;
 
-int8u txSeq = 0; // Seq cua ban tin gui di, tang dan sau moi 1 ban tin gui di
+int8u g_byTxSeq = 0; // Seq cua ban tin gui di, tang dan sau moi 1 ban tin gui di
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
@@ -78,7 +95,7 @@ void uartGetCmdEventFunction(void);
 void uartSendAck(void);
 void uartSendNack(void);
 
-void ErrorUartDriverCallbackPrint(void);
+void errorUartDriverCallbackPrint(void);
 
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
@@ -102,23 +119,23 @@ void uartSendCommand(int8u txPacketLength,
  */
 void uartDriverInit(uartDriverInitData_str uartDriverInitData){
 
-	pvUartRx.DataReceiverStep = 0;
-	pvUartRx.DataPacketLength = 0;
-	pvUartRx.ReceiverByteCnt = 0;
+	g_UartRx.DataReceiverStep = 0;
+	g_UartRx.DataPacketLength = 0;
+	g_UartRx.ReceiverByteCnt = 0;
 
-	pvUartDriverInitData.port = uartDriverInitData.port;
-	pvUartDriverInitData.parity = uartDriverInitData.parity;
-	pvUartDriverInitData.rate = uartDriverInitData.rate;
-	pvUartDriverInitData.stopBits = uartDriverInitData.stopBits;
+	g_pUartDriverInitData.port = uartDriverInitData.port;
+	g_pUartDriverInitData.parity = uartDriverInitData.parity;
+	g_pUartDriverInitData.rate = uartDriverInitData.rate;
+	g_pUartDriverInitData.stopBits = uartDriverInitData.stopBits;
 
 	if(uartDriverInitData.GetDataCallback != NULL){
-		pvUartDriverInitData.GetDataCallback = uartDriverInitData.GetDataCallback;
+		g_pUartDriverInitData.GetDataCallback = uartDriverInitData.GetDataCallback;
 	}
 	if(uartDriverInitData.UartAckCallback != NULL){
-		pvUartDriverInitData.UartAckCallback = uartDriverInitData.UartAckCallback;
+		g_pUartDriverInitData.UartAckCallback = uartDriverInitData.UartAckCallback;
 	}
 	if(uartDriverInitData.UartNackCallback != NULL){
-		pvUartDriverInitData.UartNackCallback = uartDriverInitData.UartNackCallback;
+		g_pUartDriverInitData.UartNackCallback = uartDriverInitData.UartNackCallback;
 	}
 
 
@@ -136,78 +153,74 @@ void uartDriverInit(uartDriverInitData_str uartDriverInitData){
 void uartGetCommand(void){
 	int16u wNumOfByteReceiver;
 	int8u  byReadSerialData;
-	int8u  byReadStatus;
 
-	wNumOfByteReceiver = emberSerialReadAvailable(pvUartDriverInitData.port);
+	wNumOfByteReceiver = emberSerialReadAvailable(g_pUartDriverInitData.port);
 
-	for(int8u i = 0; i<wNumOfByteReceiver; i++){
-		byReadStatus = emberSerialReadByte(pvUartDriverInitData.port,&byReadSerialData);
-		wNumOfByteReceiver--;
-#ifdef DebugUartDriver
-		emberSerialPrintf(APP_SERIAL,"%X",byReadSerialData);
-#endif
-		switch (pvUartRx.DataReceiverStep) {
-		case 0:
+	for(int8u i = 0; i<wNumOfByteReceiver; wNumOfByteReceiver--){
+		(void)emberSerialReadByte(g_pUartDriverInitData.port,&byReadSerialData);
+		DBG_UART_DRIVER_PRINT("%X",byReadSerialData);
+		switch (g_UartRx.DataReceiverStep) {
+		case stateSOF1:
 			if (byReadSerialData == PacketSOF_1) {
-				pvUartRx.DataReceiverStep ++;
+				g_UartRx.DataReceiverStep = stateSOF2;
 			}
 			else{
-				pvUartRx.DataReceiverStep = 0;
+				g_UartRx.DataReceiverStep = stateSOF1;
 				if(byReadSerialData == PacketACK){
-					if (pvUartDriverInitData.UartAckCallback != NULL){
-						pvUartDriverInitData.UartAckCallback();
+					if (g_pUartDriverInitData.UartAckCallback != NULL){
+						g_pUartDriverInitData.UartAckCallback();
 					}
 					else{
-						ErrorUartDriverCallbackPrint();
+						errorUartDriverCallbackPrint();
 					}
 				}
 				else if(byReadSerialData == PacketNACK){
-					if (pvUartDriverInitData.UartNackCallback != NULL){
-						pvUartDriverInitData.UartNackCallback();
+					if (g_pUartDriverInitData.UartNackCallback != NULL){
+						g_pUartDriverInitData.UartNackCallback();
 					}
 					else{
-						ErrorUartDriverCallbackPrint();
+						errorUartDriverCallbackPrint();
 					}
 				}
 			}
 			break;
-		case 1:
+		case stateSOF2:
 			if (byReadSerialData == PacketSOF_2) {
-				pvUartRx.DataReceiverStep ++;
+				g_UartRx.DataReceiverStep =  stateLen;
 			}
 			else{
-				pvUartRx.DataReceiverStep = 0;
+				g_UartRx.DataReceiverStep = stateSOF1;
 			}
 			break;
-		case 2:
-			pvUartRx.DataPacketLength = byReadSerialData;
-			if (pvUartRx.DataPacketLength > MaximmumLengthPerUartPacket) {
-				pvUartRx.DataReceiverStep = 0;
+		case stateLen:
+			g_UartRx.DataPacketLength = byReadSerialData;
+			if (g_UartRx.DataPacketLength > MaximmumLengthPerUartPacket) {
+				g_UartRx.DataReceiverStep = stateSOF1;
 			}
 			else {
-				pvUartRx.DataReceiverStep ++;
+				g_UartRx.DataReceiverStep = stateData;
 			}
 			break;
-		case 3:
-			if (pvUartRx.ReceiverByteCnt < pvUartRx.DataPacketLength-1) {
-				pvUartRx.Data[pvUartRx.ReceiverByteCnt] = byReadSerialData;
-				pvUartRx.ReceiverByteCnt++;
+		case stateData:
+			if (g_UartRx.ReceiverByteCnt < g_UartRx.DataPacketLength-1) {
+				g_UartRx.Data[g_UartRx.ReceiverByteCnt] = byReadSerialData;
+				g_UartRx.ReceiverByteCnt++;
 			}
 			else {
 				int8u packetCheckXor;
 				int8u checkXor = 0xFF;
 				packetCheckXor = byReadSerialData;
 				{
-					for (int8u j = 0; j < pvUartRx.DataPacketLength -1; j++) {
-						checkXor = checkXor ^ pvUartRx.Data[j];
+					for (int8u j = 0; j < g_UartRx.DataPacketLength -1; j++) {
+						checkXor = checkXor ^ g_UartRx.Data[j];
 					}
 				}
 				if (packetCheckXor == checkXor) {
-					if(pvUartDriverInitData.GetDataCallback != NULL){
-						pvUartDriverInitData.GetDataCallback(pvUartRx.Data);
+					if(g_pUartDriverInitData.GetDataCallback != NULL){
+						g_pUartDriverInitData.GetDataCallback(g_UartRx.Data);
 					}
 					else{
-						ErrorUartDriverCallbackPrint();
+						errorUartDriverCallbackPrint();
 					}
 
 					wNumOfByteReceiver = 0; // end of For case
@@ -215,22 +228,24 @@ void uartGetCommand(void){
 				}
 				else {
 					uartSendNack();
-#ifdef DebugUartDriver
-				emberSerialPrintf(APP_SERIAL,"    Length of Packet data :  %u \n\r",pvUartRx.DataPacketLength);
-				emberSerialPrintf(APP_SERIAL,"		Packet data :");
-				for(int8u i=0; i< pvUartRx.DataPacketLength - 1; i++){
-				   emberSerialPrintf(APP_SERIAL,"%X ",pvUartRx.Data[i]);
+					DBG_UART_DRIVER_PRINT("    Length of Packet data :  %u \n\r",g_UartRx.DataPacketLength);
+					DBG_UART_DRIVER_PRINT("		Packet data :");
+				for(int8u i=0; i< g_UartRx.DataPacketLength - 1; i++){
+					DBG_UART_DRIVER_PRINT("%X ",g_UartRx.Data[i]);
 				}
-				emberSerialPrintf(APP_SERIAL,"		\n\r");
-#endif // Debug
+				DBG_UART_DRIVER_PRINT("		\n\r");
+
 				}
 
-				pvUartRx.DataPacketLength = 0;
-				pvUartRx.DataReceiverStep = 0;
-				pvUartRx.ReceiverByteCnt = 0;
+				g_UartRx.DataPacketLength = 0;
+				g_UartRx.DataReceiverStep = stateSOF1;
+				g_UartRx.ReceiverByteCnt = 0;
 			}
 			break;
 		default:
+            g_UartRx.DataPacketLength = 0;
+            g_UartRx.DataReceiverStep = stateSOF1;
+            g_UartRx.ReceiverByteCnt = 0;
 			break;
 		}
 	}
@@ -260,17 +275,17 @@ void uartSendCommand(int8u txPacketLength,
 
 	int8u packetCheckXor;
 
-	packetCheckXor = 0xFF ^ txSeq ^ type ^ cmdId ^ xorStr(cmdParam, (txPacketLength - 4));
+	packetCheckXor = 0xFF ^ g_byTxSeq ^ type ^ cmdId ^ xorStr(cmdParam, (txPacketLength - 4));
 
-	emberSerialWriteByte(pvUartDriverInitData.port,PacketSOF_1);  // 1byte SOF
-	emberSerialWriteByte(pvUartDriverInitData.port,PacketSOF_2);  // 1byte SOF
-	emberSerialWriteByte(pvUartDriverInitData.port,txPacketLength);  //1byte length
-	emberSerialWriteByte(pvUartDriverInitData.port,txSeq);  //1byte txSeq
-	emberSerialWriteByte(pvUartDriverInitData.port,type);  //1byte type
-	emberSerialWriteByte(pvUartDriverInitData.port,cmdId);			//1byte cmd id
-	emberSerialWriteData(pvUartDriverInitData.port,cmdParam,(txPacketLength - 4));  //dataLength = packetLength - 4
-	emberSerialWriteByte(pvUartDriverInitData.port,packetCheckXor); // 1byte Xor
-	txSeq++;
+	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_1);  // 1byte SOF
+	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_2);  // 1byte SOF
+	emberSerialWriteByte(g_pUartDriverInitData.port,txPacketLength);  //1byte length
+	emberSerialWriteByte(g_pUartDriverInitData.port,g_byTxSeq);  //1byte g_byTxSeq
+	emberSerialWriteByte(g_pUartDriverInitData.port,type);  //1byte type
+	emberSerialWriteByte(g_pUartDriverInitData.port,cmdId);			//1byte cmd id
+	emberSerialWriteData(g_pUartDriverInitData.port,cmdParam,(txPacketLength - 4));  //dataLength = packetLength - 4
+	emberSerialWriteByte(g_pUartDriverInitData.port,packetCheckXor); // 1byte Xor
+	g_byTxSeq++;
 
 }
 /**
@@ -283,7 +298,7 @@ void uartSendCommand(int8u txPacketLength,
  * @retval None
  */
 void uartSendAck(void){
-	emberSerialWriteByte(pvUartDriverInitData.port,PacketACK);
+	emberSerialWriteByte(g_pUartDriverInitData.port,PacketACK);
 }/**
  * @func
  *
@@ -294,11 +309,11 @@ void uartSendAck(void){
  * @retval None
  */
 void uartSendNack(void){
-	emberSerialWriteByte(pvUartDriverInitData.port,PacketNACK);
+	emberSerialWriteByte(g_pUartDriverInitData.port,PacketNACK);
 }
 
-void ErrorUartDriverCallbackPrint(void){
-	emberSerialPrintf(APP_SERIAL,"    CallbackInUartDriverError \n\r");
+void errorUartDriverCallbackPrint(void){
+	DBG_UART_DRIVER_PRINT("    CallbackInUartDriverError \n\r");
 }
 
 

@@ -18,16 +18,22 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
+
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "app/framework/util/config.h"
+#include "UartCmd.h"
 #include "1_SourceCode/CustomLib/macro.h"
+#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
+#ifdef DebugLedControl
+#define DBG_LED_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define DBG_LED_PRINT(...)
+#endif
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -74,7 +80,7 @@ void ledResponseCallbackInit(void){
  * @retval None
  */
 void ledResponseHandle(int8u* data){
-	currentLedColor = data[3];
+	currentLedColor = (int8u)*data;
 }
 
 /**
@@ -156,5 +162,5 @@ void ledGetState(void){
  * @retval None
  */
 void errorMidLedCallbackPrint(void){
-	emberSerialPrintf(APP_SERIAL,"    CallbackInMidLedError \n\r");
+    DBG_LED_PRINT("    CallbackInMidLedError \n\r");
 }

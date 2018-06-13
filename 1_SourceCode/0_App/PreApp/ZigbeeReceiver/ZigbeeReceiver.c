@@ -18,12 +18,14 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+#include "app/framework/util/config.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "1_SourceCode/CustomLib/typedefs.h"
+#include "UartCmd.h"
 #include "attribute-id.h"
 #include "cluster-id.h"
 #include "attribute-type.h"

@@ -18,16 +18,24 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
+#include "app/framework/util/config.h"
+#include "UartCmd.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/CustomLib/macro.h"
+#include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
 //#define  DebugRelayControl
+
+#ifdef DebugRelayControl
+#define DBG_RELAY_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define DBG_RELAY_PRINT(...)
+#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -65,19 +73,18 @@ void relayCallbackInit(typeRelayCallback relayCallback){
  * @retval None
  */
 void relayHandler(int8u *data){
-	int8u relayState = data[3];
 
-	if(relayState == rlOnState){
+	int8u relayState = (int8u)*data;
+
+	if(relayState == RELAY_ON_STATE){
 		gRelay.relayCurrentState = boolRlOn;
 	}
-	else if(relayState == rlOffState){
+	else if(relayState == RELAY_OFF_STATE){
 		gRelay.relayCurrentState = boolRlOff;
 	}
 	if(pvRelayCallback != NULL){
 		pvRelayCallback(gRelay.relayCurrentState);
-#ifdef DebugRelayControl
-	emberSerialPrintf(APP_SERIAL,"    pvRelayCallback \n\r");
-#endif
+		DBG_RELAY_PRINT("    pvRelayCallback \n\r");
 	}
 	else{
 		errorMidRelayCallbackPrint();
@@ -98,7 +105,7 @@ void relayHandler(int8u *data){
  */
 
 void errorMidRelayCallbackPrint(void){
-	emberSerialPrintf(APP_SERIAL,"    CallbackInMidRelaynError \n\r");
+    DBG_RELAY_PRINT("    CallbackInMidRelaynError \n\r");
 }
 /**
  * @func

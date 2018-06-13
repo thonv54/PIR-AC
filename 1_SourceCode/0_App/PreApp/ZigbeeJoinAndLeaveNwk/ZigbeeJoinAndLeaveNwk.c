@@ -18,7 +18,6 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
@@ -31,6 +30,7 @@
 #include "include/error-def.h"
 #include "stdbool.h"
 #include "PIR_AC.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/

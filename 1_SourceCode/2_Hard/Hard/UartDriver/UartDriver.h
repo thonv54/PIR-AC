@@ -48,36 +48,6 @@ typedef struct{
 	typeUartNackCallback UartNackCallback;
 }uartDriverInitData_str;
 
-
-
-
-typedef enum{
-	CMD_TYPE_REQUEST = 0,
-	CMD_TYPE_RESPONSE = 1,
-	CMD_TYPE_SETUP = 2,
-	CMD_TYPE_UPDATE = 3,
-}CmdType_enum;
-
-typedef enum{
-	CMD_ID_PIR 		   = 0,
-	CMD_ID_BUTTON 	   = 1,
-	CMD_ID_LED 		   = 2,
-	CMD_ID_RELAY 	   = 3,
-	CMD_ID_LUX 		   = 4,
-	CMD_ID_LIGHT_THRES = 5,
-	CMD_ID_TIMEOUT 	   = 6,
-	CMD_ID_ERROR 	   = 7
-}CmdID_enum;
-
-
-typedef enum{
-	BUTTON_PRESS = 0,
-	BUTTON_HOLD3S = 1,
-	BUTTON_HOLD5S = 2,
-	BUTTON_HOLD10s = 3,
-	BUTTON_RELEASE = 0xFF,
-}ButtonStateID_enum;
-
 typedef enum{
 	rlOffState = 0x00,
 	rlOnState = 0x01,
