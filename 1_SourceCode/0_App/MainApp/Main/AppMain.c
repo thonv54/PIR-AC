@@ -20,12 +20,12 @@
 /******************************************************************************/
 #include "app/framework/include/af.h"
 #include "stack/include/event.h"
+#include "hal/micro/serial.h"
+#include "1_SourceCode/CustomLib/macro.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "1_SourceCode/1_Mid/LedControl/LedControl.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
-#include "1_SourceCode/CustomLib/macro.h"
-#include "hal/micro/serial.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
@@ -49,13 +49,6 @@ EmberEventControl TestEventControl;
 void TestEventFunction(void);
 
 
-
-
-
-
-
-
-
 /******************************************************************************/
 /**
  * @func
@@ -72,9 +65,6 @@ void TestEventFunction(void) {
 	emberEventControlSetDelayMS(TestEventControl, 1000);
 //	ledTurnOn(ledColorBlue);
 }
-
-
-
 
 /** @brief Main Init
  *
@@ -103,7 +93,7 @@ void emberAfMainInitCallback(void)
 	uartInitData.UartAckCallback = NULL;
 	uartInitData.UartNackCallback = NULL;
 	uartInitData.port = COM_USART0;
-	uartInitData.rate = 19200;
+	uartInitData.rate = BAUD_19200;
 	uartInitData.parity = PARITY_NONE;
 	uartInitData.stopBits = 1;
 
@@ -115,8 +105,6 @@ void emberAfMainInitCallback(void)
 	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
 
 	emberEventControlSetDelayMS(nwkJoinEventControl,1000); //
-
-//	emberEventControlSetDelayMS(TestEventControl, 1000);
 }
 
 

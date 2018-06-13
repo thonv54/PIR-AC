@@ -18,13 +18,13 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
+
+#include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
-#include "1_SourceCode/CustomLib/macro.h"
 #include "serial/serial.h"
-#include "UartCmd.h"
-
-
+#include "1_SourceCode/CustomLib/macro.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartCmd.h"
+#include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/

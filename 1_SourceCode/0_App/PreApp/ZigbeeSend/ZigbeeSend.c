@@ -18,20 +18,20 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+#include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
-#include "1_SourceCode/1_Mid/Button/MidButton.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
-#include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
-#include "1_SourceCode/1_Mid/Sensor/Sensor.h"
-#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
-#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
-#include "1_SourceCode/CustomLib/macro.h"
 #include "app/util/zigbee-framework/zigbee-device-common.h"
-#include "app/framework/util/config.h"
 #include "cluster-id.h"
 #include "attribute-id.h"
 #include "attribute-type.h"
+#include "1_SourceCode/CustomLib/macro.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/1_Mid/Button/MidButton.h"
+#include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
+#include "1_SourceCode/1_Mid/Sensor/Sensor.h"
+#include "1_SourceCode/1_Mid/LedControl/LedControl.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */

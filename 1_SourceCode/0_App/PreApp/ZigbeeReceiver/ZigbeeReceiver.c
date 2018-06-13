@@ -18,18 +18,20 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+#include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
-#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
-#include "1_SourceCode/CustomLib/typedefs.h"
-#include "UartCmd.h"
 #include "attribute-id.h"
 #include "cluster-id.h"
 #include "attribute-type.h"
 #include "include/ember-types.h"
+#include "1_SourceCode/CustomLib/typedefs.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartCmd.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeUtility/ZigbeeDefine.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
+
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -37,7 +39,7 @@
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-
+typeZdoActiveEndpointResponseCallback ZdoActiveEndpointResponseCallback;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -54,6 +56,22 @@
 /**
  *
  */
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
+
+void initActiveEndpointResponseCallback(typeZdoActiveEndpointResponseCallback callback){
+    if(callback!= NULL){
+        ZdoActiveEndpointResponseCallback = callback;
+    }
+}
 
 /** @brief Pre ZDO Message Received
  *
@@ -78,7 +96,7 @@ boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
 			FirstEndpointID = message[5];
 			gHcEndpoint = FirstEndpointID;
 		}
-		checkHcConectionErrorCnt = 0;
+		ZdoActiveEndpointResponseCallback();
 
 	} else if (apsFrame->clusterId == SIMPLE_DESCRIPTOR_RESPONSE) {
 

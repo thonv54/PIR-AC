@@ -18,11 +18,13 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+
+#include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
-#include "UartCmd.h"
+#include "1_SourceCode/CustomLib/macro.h"
+#include "1_SourceCode/2_Hard/Hard/UartDriver/UartCmd.h"
 #include "1_SourceCode/2_Hard/SubHard/UartCmdParse/UartCmdParse.h"
 #include "1_SourceCode/2_Hard/Hard/UartDriver/UartDriver.h"
-#include "1_SourceCode/CustomLib/macro.h"
 #include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
 
 /******************************************************************************/

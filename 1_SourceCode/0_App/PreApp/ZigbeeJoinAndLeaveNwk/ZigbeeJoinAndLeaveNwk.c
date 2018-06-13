@@ -18,24 +18,26 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
-#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
+#include "app/framework/include/af.h"
+#include "include/ember-types.h"
+#include "zigbee-framework/zigbee-device-common.h"
+#include "include/error-def.h"
+#include "stdbool.h"
+#include "PIR_AC.h"
+#include "1_SourceCode/CustomLib/macro.h"
 #include "1_SourceCode/1_Mid/Button/MidButton.h"
 #include "1_SourceCode/1_Mid/LedControl/LedControl.h"
 #include "1_SourceCode/1_Mid/RelayControl/RelayControl.h"
 #include "1_SourceCode/1_Mid/Sensor/Sensor.h"
-#include "include/ember-types.h"
-#include "zigbee-framework/zigbee-device-common.h"
-#include "1_SourceCode/CustomLib/macro.h"
-#include "include/error-def.h"
-#include "stdbool.h"
-#include "PIR_AC.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeSend/ZigbeeSend.h"
+#include "1_SourceCode/0_App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h"
 #include "1_SourceCode/0_App/PreApp/ZigbeeJoinAndLeaveNwk/ZigbeeJoinAndLeaveNwk.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-EmberEventControl checkHcConnectEventControl;
-int8u checkHcConectionErrorCnt = 0;
+
+typedef void (*checkHcConnectCallback)(void);
+
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -45,8 +47,12 @@ int8u checkHcConectionErrorCnt = 0;
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
+EmberEventControl checkHcConnectEventControl;
 EmberEventControl nwkLeaveEventControl;
 EmberEventControl nwkJoinEventControl;
+
+
+int8u g_checkHcConnectCnt;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
@@ -54,6 +60,7 @@ void nwkJoinEventFunction(void);
 void nwkLeaveEventFunction(void);
 void zigbeeLeaveNwkByButtonPress(int8u buttonState);
 void checkHcConnectEventFunction(void);
+void checkHcConnectionIsOk(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -118,15 +125,6 @@ void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 		break;
 	}
 }
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 /**
  * @func
@@ -158,6 +156,7 @@ void nwkJoinEventFunction(void) {
 		emberEventControlSetInactive(nwkJoinEventControl);
 
 		// neu vao mang, gui trang thai theo chu ki 4 phut 1 lan
+		initActiveEndpointResponseCallback(checkHcConnectionIsOk);
 		emberEventControlSetInactive(checkHcConnectEventControl);
 		emberEventControlSetDelayMS(checkHcConnectEventControl,
 								 halCommonGetRandom());
@@ -224,7 +223,6 @@ boolean emberAfStackStatusCallback(EmberStatus status)
  */
 
 void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
-
                                                EmberEUI64 longId,
                                                uint8_t cost)
 {
@@ -244,12 +242,25 @@ void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
  *
  * @retval None
  */
+void checkHcConnectionIsOk(void){
+    g_checkHcConnectCnt = 0;
+}
+
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
 void checkHcConnectEventFunction(void){
 	emberEventControlSetInactive(checkHcConnectEventControl);
 	emberEventControlSetDelayQS(checkHcConnectEventControl,checkHcConnectTime);
 	ZbSendZdoGetHcActiveEndpoint();
-	checkHcConectionErrorCnt ++;
-	if(checkHcConectionErrorCnt >= 10){
+	g_checkHcConnectCnt++;
+	if(g_checkHcConnectCnt >= 10){
 		halReboot(); // neu 10 lan loi lien tiep // cho reset.
 	}
 }

@@ -25,7 +25,6 @@
 /******************************************************************************/
 
 #include "app/framework/include/af.h"
-#include "app/framework/util/config.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -73,29 +72,5 @@ void buttonCallbackInit(typeButtonHold5sCallback buttonHold5sCallback,
  *
  * @retval None
  */
-
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-
 
 #endif /* 1_SOURCECODE_1_MID_BUTTON_BUTTON_H_ */

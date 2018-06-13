@@ -2,8 +2,7 @@
 
 
 
-#include <1_SourceCode/CustomLib/macro.h>
-#include "app/framework/include/af.h"
+#include "macro.h"
 
 
 unsigned char xorStr(unsigned char *Str, unsigned char Length){
@@ -37,7 +36,7 @@ void SwapEndiannessEUI64(unsigned char *val)
     ret[6] = val[1];
     ret[7] = val[0];
 
-    memcpy(val,ret, sizeof(ret));
+    val = (unsigned char*)&ret;
 }
 
 
