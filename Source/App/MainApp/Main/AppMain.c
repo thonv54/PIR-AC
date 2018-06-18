@@ -23,6 +23,7 @@
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
+#include <Source/Hard/SubHard/UartCmdParse/UartCmdParseSend.h>
 #include <Source/Mid/LedControl/LedControl.h>
 #include "app/framework/include/af.h"
 #include "stack/include/event.h"
@@ -90,15 +91,14 @@ void emberAfMainInitCallback(void)
 {
 	uartDriverInitData_str uartInitData;
 	uartInitData.GetDataCallback = NULL;
-	uartInitData.UartAckCallback = NULL;
-	uartInitData.UartNackCallback = NULL;
 	uartInitData.port = COM_USART0;
 	uartInitData.rate = BAUD_19200;
 	uartInitData.parity = PARITY_NONE;
 	uartInitData.stopBits = 1;
+	pCallbackHandle uartParseSendInit = NULL;
 
 	uartCmdParseInit(uartInitData);
-
+	uartParseSendInit(uartParseSendInit);
 	zbSendInit();
 	zigbeeLeaveByButtonInit();
 

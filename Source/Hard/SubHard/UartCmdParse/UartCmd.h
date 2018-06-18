@@ -23,6 +23,18 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+#ifndef int8u
+#define int8u unsigned char
+#endif
+
+#ifndef int16u
+#define int16u unsigned short
+#endif
+
+#ifndef int32u
+#define int32u unsigned long
+#endif
+
 #define CMD_TYPE_REQUEST    0
 #define CMD_TYPE_RESPONSE   1
 #define CMD_TYPE_SETUP      2
@@ -63,6 +75,13 @@
 #define leSetupTimeThressCmd         6
 #define leRequestCmd                 4
 
+#ifndef int8u
+#define int8u unsigned char
+#endif
+
+#ifndef int16u
+#define int16u unsigned short
+#endif
 
 typedef struct _common_ {
     int8u cmdseq;

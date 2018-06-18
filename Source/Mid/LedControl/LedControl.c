@@ -23,8 +23,8 @@
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
+#include <Source/Hard/SubHard/UartCmdParse/UartCmdParseSend.h>
 #include <Source/Mid/LedControl/LedControl.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */

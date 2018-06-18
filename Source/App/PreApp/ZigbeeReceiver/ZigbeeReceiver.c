@@ -30,7 +30,7 @@
 #include <Source/App/PreApp/ZigbeeSend/ZigbeeSend.h>
 #include <Source/App/PreApp/ZigbeeUtility/ZigbeeDefine.h>
 #include <Source/CustomLib/typedefs.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+#include <Source/Hard/SubHard/UartCmdParse/UartCmdParseSend.h>
 #include <Source/App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h>
 
 

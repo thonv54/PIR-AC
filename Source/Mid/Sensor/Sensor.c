@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+#include <Source/Hard/SubHard/UartCmdParse/UartCmdParseSend.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/Sensor/Sensor.h>
 #include "app/framework/include/af.h"

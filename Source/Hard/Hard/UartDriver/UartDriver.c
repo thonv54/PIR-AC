@@ -28,8 +28,15 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+#ifndef int8u
+#define int8u unsigned char
+#endif
 
+#ifndef int16u
+#define int16u unsigned short
+#endif
 
+#define CXOR_INIT_VAL 0xFF;
 
 #define stateSOF1   0
 #define stateSOF2   1
@@ -45,16 +52,10 @@
 #endif
 
 
-
-#define PacketSOF_1 0xAA
-#define PacketSOF_2 0x55
-#define PacketACK 0x06
-#define PacketNACK 0x15
-
-
 #define RX_BUFF	1024
 
-#define MaximmumLengthPerUartPacket 100
+#define MaximumLengthPerUartPacket 100
+#define MinimumLengthPerUartPacket  5
 //#define DebugUartDriver
 
 
@@ -74,9 +75,10 @@ typedef struct{
 /******************************************************************************/
 
 uartRx_Str g_UartRx;
+pCallbackHandle pvCallbackHandleAck;
 uartDriverInitData_str g_pUartDriverInitData;
+static int8u packetCheckXor;
 
-int8u g_byTxSeq = 0; // Seq cua ban tin gui di, tang dan sau moi 1 ban tin gui di
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
@@ -101,12 +103,9 @@ void errorUartDriverCallbackPrint(void);
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 void uartDriverInit(uartDriverInitData_str uartDriverInitData);
-void uartGetCommand(void);
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u *cmdParam);
-
+int8u uartGetCommand(void);
+void uartSendData(int8u *cmdData, int8u lengthTxData);
+void uartDriverHandleAckInit(pCallbackHandle pCallbackHandleAck);
 
 /**
  * @func
@@ -131,14 +130,12 @@ void uartDriverInit(uartDriverInitData_str uartDriverInitData){
 	if(uartDriverInitData.GetDataCallback != NULL){
 		g_pUartDriverInitData.GetDataCallback = uartDriverInitData.GetDataCallback;
 	}
-	if(uartDriverInitData.UartAckCallback != NULL){
-		g_pUartDriverInitData.UartAckCallback = uartDriverInitData.UartAckCallback;
-	}
-	if(uartDriverInitData.UartNackCallback != NULL){
-		g_pUartDriverInitData.UartNackCallback = uartDriverInitData.UartNackCallback;
-	}
+}
 
-
+void uartDriverHandleAckInit(pCallbackHandle pCallbackHandleAck){
+	if (pCallbackHandleAck != NULL){
+		pvCallbackHandleAck = pCallbackHandleAck;
+	}
 }
 
 /**
@@ -150,7 +147,7 @@ void uartDriverInit(uartDriverInitData_str uartDriverInitData){
  *
  * @retval None
  */
-void uartGetCommand(void){
+int8u uartGetCommand(void){
 	int16u wNumOfByteReceiver;
 	int8u  byReadSerialData;
 
@@ -167,20 +164,10 @@ void uartGetCommand(void){
 			else{
 				g_UartRx.DataReceiverStep = stateSOF1;
 				if(byReadSerialData == PacketACK){
-					if (g_pUartDriverInitData.UartAckCallback != NULL){
-						g_pUartDriverInitData.UartAckCallback();
-					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
+					return resultRxACK;
 				}
 				else if(byReadSerialData == PacketNACK){
-					if (g_pUartDriverInitData.UartNackCallback != NULL){
-						g_pUartDriverInitData.UartNackCallback();
-					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
+					return resultRxNACK;
 				}
 			}
 			break;
@@ -194,69 +181,75 @@ void uartGetCommand(void){
 			break;
 		case stateLen:
 			g_UartRx.DataPacketLength = byReadSerialData;
-			if (g_UartRx.DataPacketLength > MaximmumLengthPerUartPacket) {
+			if ((g_UartRx.DataPacketLength > MaximumLengthPerUartPacket)||
+					(g_UartRx.DataPacketLength < MinimumLengthPerUartPacket)) {
 				g_UartRx.DataReceiverStep = stateSOF1;
 			}
 			else {
 				g_UartRx.DataReceiverStep = stateData;
+				packetCheckXor = CXOR_INIT_VAL;
+	            g_UartRx.ReceiverByteCnt = 0;
 			}
 			break;
 		case stateData:
 			if (g_UartRx.ReceiverByteCnt < g_UartRx.DataPacketLength-1) {
 				g_UartRx.Data[g_UartRx.ReceiverByteCnt] = byReadSerialData;
+				packetCheckXor ^= byReadSerialData;
 				g_UartRx.ReceiverByteCnt++;
 			}
 			else {
-				int8u packetCheckXor;
-				int8u checkXor = 0xFF;
-				packetCheckXor = byReadSerialData;
-				{
-					for (int8u j = 0; j < g_UartRx.DataPacketLength -1; j++) {
-						checkXor = checkXor ^ g_UartRx.Data[j];
-					}
-				}
-				if (packetCheckXor == checkXor) {
+				if (packetCheckXor == byReadSerialData) {
 					if(g_pUartDriverInitData.GetDataCallback != NULL){
 						g_pUartDriverInitData.GetDataCallback(g_UartRx.Data);
 					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
-
-					wNumOfByteReceiver = 0; // end of For case
-					uartSendAck();
+					return resultRxCMD;
 				}
-				else {
-					uartSendNack();
-					DBG_UART_DRIVER_PRINT("    Length of Packet data :  %u \n\r",g_UartRx.DataPacketLength);
-					DBG_UART_DRIVER_PRINT("		Packet data :");
-				for(int8u i=0; i< g_UartRx.DataPacketLength - 1; i++){
-					DBG_UART_DRIVER_PRINT("%X ",g_UartRx.Data[i]);
-				}
-				DBG_UART_DRIVER_PRINT("		\n\r");
-
-				}
-
-				g_UartRx.DataPacketLength = 0;
-				g_UartRx.DataReceiverStep = stateSOF1;
-				g_UartRx.ReceiverByteCnt = 0;
+				return resultRxErr;
 			}
 			break;
 		default:
-            g_UartRx.DataPacketLength = 0;
             g_UartRx.DataReceiverStep = stateSOF1;
-            g_UartRx.ReceiverByteCnt = 0;
 			break;
 		}
-	}
+	} return resultRxIdle;
 }
-
 
 // Event function stub
 void uartGetCmdEventFunction(void) {
+	int8u resultRx;
 	emberEventControlSetInactive(uartGetCmdEventControl);
 	emberEventControlSetDelayMS(uartGetCmdEventControl,70); // 70ms 1 lan kiem tra buffer uart va xu ly
-	uartGetCommand();
+	resultRx = uartGetCommand();
+	if (resultRx != resultRxIdle){
+		switch (resultRx){
+		case resultRxACK:
+			if (pvCallbackHandleAck != NULL){
+				pvCallbackHandleAck (resultRxACK);
+			} break;
+		case resultRxNACK:
+			if (pvCallbackHandleAck != NULL){
+				pvCallbackHandleAck (resultRxNACK);
+			} break;
+		case resultRxCMD:
+			uartSendAck();
+			DBG_UART_DRIVER_PRINT("Received successfully!")
+			break;
+		case resultRxErr:
+			uartSendNack();
+			DBG_UART_DRIVER_PRINT("Received failed!");
+			DBG_UART_DRIVER_PRINT(" Length of Packet data :  %u \n\r",g_UartRx.DataPacketLength);
+			DBG_UART_DRIVER_PRINT(" Packet data :");
+			for(int8u i=0; i< g_UartRx.DataPacketLength - 1; i++){
+				DBG_UART_DRIVER_PRINT("%X ",g_UartRx.Data[i]);
+			}
+			DBG_UART_DRIVER_PRINT(" \n\r");
+			break;
+		default:
+			DBG_UART_DRIVER_PRINT("Result invalid!\n");
+			break;
+		}
+	}
+
 }
 
 /**
@@ -268,24 +261,8 @@ void uartGetCmdEventFunction(void) {
  *
  * @retval None
  */
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u *cmdParam){
-
-	int8u packetCheckXor;
-
-	packetCheckXor = 0xFF ^ g_byTxSeq ^ type ^ cmdId ^ xorStr(cmdParam, (txPacketLength - 4));
-
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_1);  // 1byte SOF
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_2);  // 1byte SOF
-	emberSerialWriteByte(g_pUartDriverInitData.port,txPacketLength);  //1byte length
-	emberSerialWriteByte(g_pUartDriverInitData.port,g_byTxSeq);  //1byte g_byTxSeq
-	emberSerialWriteByte(g_pUartDriverInitData.port,type);  //1byte type
-	emberSerialWriteByte(g_pUartDriverInitData.port,cmdId);			//1byte cmd id
-	emberSerialWriteData(g_pUartDriverInitData.port,cmdParam,(txPacketLength - 4));  //dataLength = packetLength - 4
-	emberSerialWriteByte(g_pUartDriverInitData.port,packetCheckXor); // 1byte Xor
-	g_byTxSeq++;
+void uartSendData(int8u *cmdData, int8u lengthTxData){
+	emberSerialWriteData(g_pUartDriverInitData.port,cmdData,lengthTxData);
 
 }
 /**
@@ -299,7 +276,9 @@ void uartSendCommand(int8u txPacketLength,
  */
 void uartSendAck(void){
 	emberSerialWriteByte(g_pUartDriverInitData.port,PacketACK);
-}/**
+
+}
+/**
  * @func
  *
  * @brief  None
@@ -311,7 +290,15 @@ void uartSendAck(void){
 void uartSendNack(void){
 	emberSerialWriteByte(g_pUartDriverInitData.port,PacketNACK);
 }
-
+/**
+ * @func
+ *
+ * @brief  None
+ *
+ * @param  None
+ *
+ * @retval None
+ */
 void errorUartDriverCallbackPrint(void){
 	DBG_UART_DRIVER_PRINT("    CallbackInUartDriverError \n\r");
 }

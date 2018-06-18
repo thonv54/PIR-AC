@@ -27,10 +27,16 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
+#ifndef int8u
+#define int8u unsigned char
+#endif
+
+#ifndef int16u
+#define int16u unsigned short
+#endif
 
 typedef void (*typeGetDataCallback)(int8u *data);
-typedef void (*typeUartAckCallback)(void);
-typedef void (*typeUartNackCallback)(void);
+typedef void (*pCallbackHandle)(int8u byte);
 
 
 typedef struct{
@@ -39,8 +45,6 @@ typedef struct{
 	SerialParity parity;
 	int8u stopBits;
 	typeGetDataCallback GetDataCallback;
-	typeUartAckCallback UartAckCallback;
-	typeUartNackCallback UartNackCallback;
 }uartDriverInitData_str;
 
 
@@ -49,6 +53,15 @@ typedef enum{
 	pirNoMotion = 0x00,
 	pirMotion = 0x01,
 }PirState_enum;
+
+typedef enum{
+	resultRxACK,
+	resultRxNACK,
+	resultRxCMD,
+	resultRxErr,
+	resultRxIdle,
+}RESULT_RX;
+
 
 #define	leUpdateButtonCmd 		 	 5
 #define	leUpdatePirStatecmd 		 5
@@ -61,6 +74,10 @@ typedef enum{
 #define leSetupTimeThressCmd		 6
 #define leRequestCmd				 4
 
+#define PacketSOF_1 0xAA
+#define PacketSOF_2 0x55
+#define PacketACK 0x06
+#define PacketNACK 0x15
 
 
 /******************************************************************************/
@@ -77,11 +94,8 @@ extern EmberEventControl uartGetCmdEventControl;
 /******************************************************************************/
 
 void uartDriverInit(uartDriverInitData_str uartDriverInitData);
-void uartGetCommand(void);
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u cmdParam[10]);
+void uartDriverHandleAckInit(pCallbackHandle pCallbackHandleAck);
+void uartSendData(int8u *cmdData, int8u lengthTxData);
 
 
 /**
@@ -94,27 +108,6 @@ void uartSendCommand(int8u txPacketLength,
  * @retval None
  */
 
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 
 #endif /* 1_SOURCECODE_2_HARD_HARD_UARTDRIVER_UARTDRIVER_H_ */
