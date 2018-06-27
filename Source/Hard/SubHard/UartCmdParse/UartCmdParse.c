@@ -20,7 +20,6 @@
 /******************************************************************************/
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
-#include "serial/serial.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
@@ -28,7 +27,7 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-//#define  DebugCmdParse
+#define  DebugCmdParse
 
 #ifdef DebugCmdParse
 #define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
@@ -40,11 +39,17 @@
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeGetCallback g_pGetButtonCallback;
-typeGetCallback g_pGetSensorCallback;
-typeGetCallback g_pGetRelayCallback;
-typeGetCallback	g_pGetLedCallback;
+byte_pCallbackFunc pvButtonCallback;
+byte_pCallbackFunc pvLedCallback;
+byte_pCallbackFunc pvRelayCallback;
+byte_pCallbackFunc pvSensorCallback;
+byte_pCallbackFunc pvUartInitCallback;
 
+byte_t portUartInit;
+
+static byte_t uartTxBuff[MAX_LENGTH_CMD_TX];
+static byte_t lengthTxBuff;
+static byte_t sequenceTx = 0;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -53,116 +58,118 @@ typeGetCallback	g_pGetLedCallback;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void GetDataHandler(int8u *data);
 
-void errorUartCmdParseCallbackPrint(void);
+void handleDataRx(byte_p data);
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 
+void uartParseDataInit(byte_t portInit, byte_pCallbackFunc InitHandleDataRx);
+void cmdParseButtonCallbackInit(byte_pCallbackFunc getButtonCallback);
+void cmdParseSensorCallbackInit(byte_pCallbackFunc getSensorCallback);
+void cmdParseRelayCallbackInit(byte_pCallbackFunc  getRelayCallback);
+void cmdParseLedCallbackInit(byte_pCallbackFunc getLedCallback);
 
+void uartSendCommand(byte_t TxLength,
+					 byte_t type,
+					 byte_t cmdId,
+					 byte_p data,
+					 byteCallbackFunc TxCallbackFunc);
 
 /**
- * @func
+ * @function     : uartParseDataInit
  *
- * @brief  None
+ * @brief        : Initialize callback function
  *
- * @param  None
+ * @parameter    : Callback function
  *
- * @retval None
+ * @return value : None
  */
-void cmdParseButtonCallbackInit(typeGetCallback getButtonCallback){
+
+void uartParseDataInit(byte_t portInit, byte_pCallbackFunc InitHandleDataRx){
+	portUartInit = portInit;
+	if (InitHandleDataRx == NULL){
+		pvUartInitCallback = handleDataRx;
+	}
+	else pvUartInitCallback = InitHandleDataRx;
+	uartDriverInit(portUartInit, pvUartInitCallback);
+}
+
+/**
+ * @function     : cmdParse CallbackInit
+ *
+ * @brief        : Initialize callback function
+ *
+ * @parameter    : Callback function
+ *
+ * @return value : None
+ */
+
+void cmdParseButtonCallbackInit(byte_pCallbackFunc getButtonCallback){
 	if(getButtonCallback != NULL){
-		g_pGetButtonCallback = getButtonCallback;
+		pvButtonCallback = getButtonCallback;
 	}
 }
-void cmdParseSensorCallbackInit(typeGetCallback getSensorCallback){
+void cmdParseSensorCallbackInit(byte_pCallbackFunc getSensorCallback){
 	if(getSensorCallback !=  NULL){
-		g_pGetSensorCallback = getSensorCallback;
+		pvSensorCallback = getSensorCallback;
 	}
 }
 
-void cmdParseRelayCallbackInit(typeGetCallback  getRelayCallback){
+void cmdParseRelayCallbackInit(byte_pCallbackFunc  getRelayCallback){
 	if(getRelayCallback != NULL){
-		g_pGetRelayCallback = getRelayCallback;
+		pvRelayCallback = getRelayCallback;
 	}
 }
 
-
-void cmdParseLedCallbackInit(typeGetCallback  getLedCallback){
+void cmdParseLedCallbackInit(byte_pCallbackFunc  getLedCallback){
 	if(getLedCallback != NULL){
-		g_pGetLedCallback = getLedCallback;
+		pvLedCallback = getLedCallback;
 	}
 }
-void uartCmdParseInit(uartDriverInitData_str uartDriverInitData){
-	if(uartDriverInitData.GetDataCallback == NULL){
-		uartDriverInitData.GetDataCallback = GetDataHandler;      // neu tang tren khong Handler, thu se Handler o tang nay
-	}
-	uartDriverInit(uartDriverInitData);
-}
+
 /**
- * @func
+ * @function     : handleDataRx
  *
- * @brief  None
+ * @brief        : Handle data received
  *
- * @param  None
+ * @parameter    : data
  *
- * @retval None
+ * @return value : None
  */
-void GetDataHandler(int8u *data){
 
-    CMD_BUFFER *cmd = (CMD_BUFFER*)data;
+void handleDataRx(byte_p data){
+	CMD_BUFFER *cmd = (CMD_BUFFER*) data;
 
-	switch(cmd->uCommon.cmdid){
+	switch (cmd -> uCommon.cmdtype){
 	case CMD_TYPE_UPDATE:
 	case CMD_TYPE_RESPONSE:
-		switch(cmd->uCommon.cmdtype){
+		switch (cmd -> uCommon.cmdid){
 		case CMD_ID_BUTTON:
-			if(g_pGetButtonCallback != NULL){
-				g_pGetButtonCallback((int8u*)&cmd->uButtonState.state);
-
-				DBG_CMD_PARSE_PRINT("    g_pGetButtonCallback \n\r");
-
-			}
-			else{
-				errorUartCmdParseCallbackPrint();
-				// cb_error
+			DBG_CMD_PARSE_PRINT ("Button!");
+			if (pvButtonCallback != NULL){
+				pvButtonCallback ((byte_p) &cmd -> uButtonState.state);
 			}
 			break;
 		case CMD_ID_LED:
-			if(g_pGetLedCallback!= NULL){
-				g_pGetLedCallback((int8u*)&cmd->uLedState.state);
-
-				DBG_CMD_PARSE_PRINT("    g_pGetLedCallback \n\r");
-
-			}
-			else{
-				errorUartCmdParseCallbackPrint();
-				// cb_error
+			DBG_CMD_PARSE_PRINT("Led!");
+			if (pvLedCallback != NULL){
+				pvLedCallback ((byte_p) &cmd -> uLedState.state);
 			}
 			break;
 		case CMD_ID_RELAY:
-			if(g_pGetRelayCallback!= NULL){
-				g_pGetRelayCallback((int8u*)&cmd->uRelayState.state);
-				DBG_CMD_PARSE_PRINT("    g_pGetRelayCallback \n\r");
-
-			}
-			else{
-				errorUartCmdParseCallbackPrint();
-				// cb_error
+			DBG_CMD_PARSE_PRINT("Relay");
+			if (pvRelayCallback != NULL){
+				pvRelayCallback ((byte_p) &cmd -> uRelayState.state);
 			}
 			break;
 		case CMD_ID_PIR:
 		case CMD_ID_LUX:
 		case CMD_ID_LIGHT_THRES:
 		case CMD_ID_TIMEOUT:
-			if(g_pGetSensorCallback != NULL){
-				g_pGetSensorCallback(data);
-				DBG_CMD_PARSE_PRINT("    g_pGetSensorCallback \n\r");
-			}
-			else{
-				errorUartCmdParseCallbackPrint();
-				// cb_error
+			if (pvSensorCallback != NULL){
+				pvSensorCallback (data);
 			}
 			break;
 		case CMD_ID_ERROR:
@@ -174,26 +181,41 @@ void GetDataHandler(int8u *data){
 	default:
 		break;
 	}
+}
 
-}
 /**
- * @func
+ * @function     : uartSendCommand
  *
- * @brief  None
+ * @brief        : Send command
  *
- * @param  None
+ * @parameter    : length, type, cmdId, data
  *
- * @retval None
+ * @return value : None
  */
-void errorUartCmdParseCallbackPrint(void){
-	DBG_CMD_PARSE_PRINT("    CallbackInUartCmdParseError \n\r");
+
+void uartSendCommand(byte_t txLength,
+					 byte_t type,
+					 byte_t cmdId,
+					 byte_p data,
+					 byteCallbackFunc TxCallbackFunc){
+	byte_t i;
+	byte_t txCheckXor = CXOR_INIT_VAL;
+	lengthTxBuff = txLength + 3;
+
+	uartTxBuff[0] = PacketSOF_1;         // 1byte SOF
+	uartTxBuff[1] = PacketSOF_2;        // 1byte SOF
+	uartTxBuff[2] = txLength;          //1byte length
+	uartTxBuff[3] = sequenceTx;       //1byte sequenceTx
+	uartTxBuff[4] = type;            //1byte type
+	uartTxBuff[5] = cmdId;			//1byte cmdId
+	memcpy(&uartTxBuff[6],data,(lengthTxBuff - 4));
+
+	for (i = 2; i < lengthTxBuff -1; i++){
+		txCheckXor ^= uartTxBuff[i];
+	}
+	uartTxBuff[lengthTxBuff - 1] = txCheckXor;   // 1byte checkXor
+
+	WriteOnTopBuffTx ((byte_p) &uartTxBuff, lengthTxBuff, TxCallbackFunc);
+
+	sequenceTx ++;
 }
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */

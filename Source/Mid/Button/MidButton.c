@@ -38,9 +38,9 @@
 
 
 typedef struct{
-	int8u ButtonCurrentState;
-	int8u ButtonLastState;
-	int32u LastTimeFromGetState;
+	byte_t ButtonCurrentState;
+	byte_t ButtonLastState;
+	uint_t LastTimeFromGetState;
 }ButtonData_str;
 
 /******************************************************************************/
@@ -57,7 +57,7 @@ typeButtonPressCallback pvButtonPressCallback;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void buttonStateFromUartHandle(int8u *data);
+void buttonStateFromUartHandle(byte_t *data);
 
 ButtonData_str pvButton;
 
@@ -99,9 +99,9 @@ void buttonCallbackInit(typeButtonHold5sCallback buttonHold5sCallback,
  *
  * @retval None
  */
-void buttonStateFromUartHandle(int8u* data){
+void buttonStateFromUartHandle(byte_t* data){
 
-	pvButton.ButtonCurrentState = (int8u)*data;
+	pvButton.ButtonCurrentState = (byte_t)*data;
 	switch(pvButton.ButtonCurrentState){
 	case BUTTON_HOLD10s:
 		break;

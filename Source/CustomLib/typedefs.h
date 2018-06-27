@@ -59,6 +59,9 @@ typedef signed short*           i16_p;      // 2 byte
 typedef signed long*            i32_p;      // 4 byte
 typedef signed long long*       i64_p;
 
+typedef void (*byteCallbackFunc) (byte_t);
+typedef void (*byte_pCallbackFunc) (byte_p);
+
 #ifndef TRUE
 #define FALSE                   0
 #define TRUE                    1

@@ -77,6 +77,7 @@ void zigbeeLeaveByButtonInit(void);
  */
 void zigbeeLeaveByButtonInit(void) {
 	buttonCallbackInit(zigbeeLeaveNwkByButtonPress, NULL);
+	emberEventControlSetDelayMS(nwkJoinEventControl,1000);
 }
 
 /**

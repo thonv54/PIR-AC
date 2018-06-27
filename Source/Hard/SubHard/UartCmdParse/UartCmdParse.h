@@ -26,15 +26,12 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+
 #include "app/framework/include/af.h"
-
-
+#include "Source/CustomLib/typedefs.h"
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
-typedef void (*typeGetCallback)(int8u *data);
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -47,12 +44,18 @@ typedef void (*typeGetCallback)(int8u *data);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void uartCmdParseInit(uartDriverInitData_str uartDriverInitData);
 
-void cmdParseButtonCallbackInit(typeGetCallback getButtonCallback);
-void cmdParseSensorCallbackInit(typeGetCallback getSensorCallback);
-void cmdParseRelayCallbackInit(typeGetCallback  getRelayCallback);
-void cmdParseLedCallbackInit(typeGetCallback  getLedCallback);
+void uartParseDataInit(byte_t portInit, byte_pCallbackFunc InitHandleDataRx);
+void cmdParseButtonCallbackInit(byte_pCallbackFunc getButtonCallback);
+void cmdParseSensorCallbackInit(byte_pCallbackFunc getSensorCallback);
+void cmdParseRelayCallbackInit(byte_pCallbackFunc  getRelayCallback);
+void cmdParseLedCallbackInit(byte_pCallbackFunc getLedCallback);
+
+void uartSendCommand(byte_t TxLength,
+					 byte_t type,
+					 byte_t cmdId,
+					 byte_p data,
+					 byteCallbackFunc TxCallbackFunc);
 
 
 /**

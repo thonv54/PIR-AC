@@ -23,7 +23,7 @@
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/LedControl/LedControl.h>
 /******************************************************************************/
@@ -42,21 +42,21 @@
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-int8u currentLedColor;
+byte_t currentLedColor;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void errorMidLedCallbackPrint(void);
-void ledResponseHandle(int8u* data);
+void ledResponseHandle(byte_t* data);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void ledTurnOn(int8u color);
+void ledTurnOn(byte_t color);
 void ledTurnOff(void);
-void ledBlink(int8u color,
-				int8u timeDelay,
-				int8u times,
-				int8u lastState);
+void ledBlink(byte_t color,
+				byte_t timeDelay,
+				byte_t times,
+				byte_t lastState);
 
 
 /**
@@ -80,8 +80,8 @@ void ledResponseCallbackInit(void){
  *
  * @retval None
  */
-void ledResponseHandle(int8u* data){
-	currentLedColor = (int8u)*data;
+void ledResponseHandle(byte_t* data){
+	currentLedColor = (byte_t)*data;
 }
 
 /**
@@ -93,11 +93,11 @@ void ledResponseHandle(int8u* data){
  *
  * @retval None
  */
-void ledTurnOn(int8u color){
+void ledTurnOn(byte_t color){
 	ledParam_str ledParam;
 	ledParam.LedColor = color;
 	ledParam.LedControlState = ledStateOn;
-	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor);
+	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor,NULL);
 }
 
 /**
@@ -113,7 +113,7 @@ void ledTurnOff(void){
 	ledParam_str ledParam;
 	ledParam.LedColor = ledColorPink;
 	ledParam.LedControlState = ledStateOff;
-	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor);
+	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor, NULL);
 }
 
 
@@ -126,17 +126,17 @@ void ledTurnOff(void){
  *
  * @retval None
  */
-void ledBlink(int8u color,
-				int8u timeDelay,
-				int8u times,
-				int8u lastState){
+void ledBlink(byte_t color,
+				byte_t timeDelay,
+				byte_t times,
+				byte_t lastState){
 	ledParam_str ledParam;
 	ledParam.LedColor = color;
 	ledParam.LedControlState = ledStateBlink;
 	ledParam.BlinkTimes = times;
 	ledParam.TimeDelayBlink = timeDelay;
 	ledParam.LastState = lastState;
-	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor);
+	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor,NULL);
 }
 
 /**
@@ -150,7 +150,7 @@ void ledBlink(int8u color,
  */
 void ledGetState(void){
 	ledResponseCallbackInit();
-	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL);
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL,NULL);
 }
 
 /**

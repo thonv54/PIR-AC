@@ -151,10 +151,10 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayIllumMeasurementClusterServer[
 // Array of profile ids
 #define FIXED_PROFILE_IDS { 260, 260, 260, 260 }
 
-// Array of profile ids
+// Array of device ids
 #define FIXED_DEVICE_IDS { 256, 259, 1027, 262 }
 
-// Array of profile ids
+// Array of device versions
 #define FIXED_DEVICE_VERSIONS { 0, 0, 0, 0 }
 
 // Array of endpoint types supported on each endpoint
@@ -185,11 +185,13 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayIllumMeasurementClusterServer[
   extern EmberEventControl nwkJoinEventControl; \
   extern EmberEventControl nwkLeaveEventControl; \
   extern EmberEventControl uartGetCmdEventControl; \
+  extern EmberEventControl uartSendCmdEventControl; \
   extern void TestEventFunction(void); \
   extern void checkHcConnectEventFunction(void); \
   extern void nwkJoinEventFunction(void); \
   extern void nwkLeaveEventFunction(void); \
   extern void uartGetCmdEventFunction(void); \
+  extern void uartSendCmdEventFunction(void); \
   static void clusterTickWrapper(EmberEventControl *control, EmberAfTickFunction callback, uint8_t endpoint) \
   { \
     emberAfPushEndpointNetworkIndex(endpoint); \
@@ -219,6 +221,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayIllumMeasurementClusterServer[
   { &nwkJoinEventControl, nwkJoinEventFunction }, \
   { &nwkLeaveEventControl, nwkLeaveEventFunction }, \
   { &uartGetCmdEventControl, uartGetCmdEventFunction }, \
+  { &uartSendCmdEventControl, uartSendCmdEventFunction }, \
 
 
 #define EMBER_AF_GENERATED_EVENT_STRINGS   \
@@ -236,6 +239,7 @@ PGM EmberAfGenericClusterFunction emberAfFuncArrayIllumMeasurementClusterServer[
   "nwkJoin Custom",  \
   "nwkLeave Custom",  \
   "uartGetCmd Custom",  \
+  "uartSendCmd Custom",  \
 
 
 // The length of the event context table used to track and retrieve cluster events

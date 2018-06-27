@@ -30,7 +30,7 @@
 #include <Source/App/PreApp/ZigbeeSend/ZigbeeSend.h>
 #include <Source/App/PreApp/ZigbeeUtility/ZigbeeDefine.h>
 #include <Source/CustomLib/typedefs.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+#include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/App/PreApp/ZigbeeReceiver/ZigbeeReceiver.h>
 
 
@@ -128,7 +128,7 @@ void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint
 				ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID,
 				(int8u*)&value,
 				sizeof(value));
-		uartSendCommand(leSetupLightThressCmd,CMD_TYPE_SETUP,CMD_ID_LIGHT_THRES,(int8u*)&value);
+		uartSendCommand(leSetupLightThressCmd,CMD_TYPE_SETUP,CMD_ID_LIGHT_THRES,(int8u*)&value, NULL);
 	}
 	else if(attributeId == ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID){
 		emberAfReadServerAttribute(endpoint,
@@ -136,7 +136,7 @@ void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint
 				ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID,
 				(int8u*)&value,
 				sizeof(value));
-		uartSendCommand(leSetupTimeThressCmd,CMD_TYPE_SETUP,CMD_ID_TIMEOUT,(int8u*)&value);
+		uartSendCommand(leSetupTimeThressCmd,CMD_TYPE_SETUP,CMD_ID_TIMEOUT,(int8u*)&value, NULL);
 
 	}
 }
@@ -151,7 +151,7 @@ boolean emberAfOnOffClusterOffCallback(void)
 {
 	int8u relayState = rlOffState;
 	boolean value = 0;
-	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
+	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState, NULL);
 	zbSendRelayState(value);
 
 	return TRUE;
@@ -176,7 +176,7 @@ boolean emberAfOnOffClusterOnCallback(void)
 {
 	int8u relayState = rlOnState;
 	boolean value = 1;
-	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState);
+	uartSendCommand(leSetupRelayCmd,CMD_TYPE_SETUP,CMD_ID_RELAY,(int8u*)&relayState, NULL);
 	zbSendRelayState(value);
     return TRUE;
 }

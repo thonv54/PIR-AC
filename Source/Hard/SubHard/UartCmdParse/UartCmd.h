@@ -19,7 +19,10 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
+
+#include <Source/CustomLib/typedefs.h>
 #include "app/framework/include/af.h"
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -65,63 +68,63 @@
 
 
 typedef struct _common_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdid;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdid;
 } COMMON;
 
 typedef struct _pir_state_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u state;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t state;
 } PIRSTATE;
 
 typedef struct _button_state_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u state;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t state;
 } BUTTONSTATE;
 
 typedef struct _led_state_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u state;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t state;
 } LEDSTATE;
 
 typedef struct _relay_state_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u state;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t state;
 } RELAYSTATE;
 
 typedef struct _lux_data_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u high_byte_Lux;
-    int8u low_byte_Lux;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t high_byte_Lux;
+    byte_t low_byte_Lux;
 } LUXDATA;
 
 typedef struct _light_thress_data_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u high_byte_LightThress;
-    int8u low_byte_LightThress;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t high_byte_LightThress;
+    byte_t low_byte_LightThress;
 } LIGHTTHRESSDATA;
 
 typedef struct _light_time_data_ {
-    int8u cmdseq;
-    int8u cmdtype;
-    int8u cmdId;
-    int8u highest_byte_TimeThress;
-    int8u high_byte_TimeThress;
-    int8u low_byte_TimeThress;
-    int8u lowest_byte_TimeThress;
+    byte_t cmdseq;
+    byte_t cmdtype;
+    byte_t cmdId;
+    byte_t highest_byte_TimeThress;
+    byte_t high_byte_TimeThress;
+    byte_t low_byte_TimeThress;
+    byte_t lowest_byte_TimeThress;
 } TIMETHRESSDATA;
 
 typedef union _CMD_BUFFER_ {

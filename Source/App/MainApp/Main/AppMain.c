@@ -31,6 +31,14 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
+#define DebugCmdParse
+
+#ifdef DebugCmdParse
+#define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define	DBG_CMD_PARSE_PRINT(...)
+#endif
+
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -47,7 +55,7 @@ EmberEventControl TestEventControl;
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 void TestEventFunction(void);
-
+//void testTxCallback (byte_t result);
 
 /******************************************************************************/
 /**
@@ -60,11 +68,18 @@ void TestEventFunction(void);
  * @retval None
  */
 
+
 void TestEventFunction(void) {
+	/*byte_t color[10] = {50, 51, 52, 53, 54, 55, 56, 57, 58, 59};
+
+	uartSendCommand (9, 2, 2, color, testTxCallback);
+	uartSendCommand (9, 2, 2, &color[3], testTxCallback);
+
 	emberEventControlSetInactive(TestEventControl);
-	emberEventControlSetDelayMS(TestEventControl, 1000);
-//	ledTurnOn(ledColorBlue);
+	emberEventControlSetDelayMS(TestEventControl, 10000);
+	*/
 }
+
 
 /** @brief Main Init
  *
@@ -86,25 +101,27 @@ void TestEventFunction(void) {
  * Application Framework itself.
  *
  */
+
+/*void testTxCallback (byte_t result){
+	switch (result){
+	case resultTxSUCCESS:
+		DBG_CMD_PARSE_PRINT ("SUCCESS!");
+		break;
+	case resultTxFALSE:
+		DBG_CMD_PARSE_PRINT ("FALSE!");
+		break;
+	default:
+		break;
+	}
+}
+*/
+
 void emberAfMainInitCallback(void)
 {
-	uartDriverInitData_str uartInitData;
-	uartInitData.GetDataCallback = NULL;
-	uartInitData.UartAckCallback = NULL;
-	uartInitData.UartNackCallback = NULL;
-	uartInitData.port = COM_USART0;
-	uartInitData.rate = BAUD_19200;
-	uartInitData.parity = PARITY_NONE;
-	uartInitData.stopBits = 1;
-
-	uartCmdParseInit(uartInitData);
-
+	uartParseDataInit(COM_USART0, NULL);
 	zbSendInit();
 	zigbeeLeaveByButtonInit();
-
-	emberEventControlSetDelayMS(uartGetCmdEventControl,1000); //
-
-	emberEventControlSetDelayMS(nwkJoinEventControl,1000); //
+	//emberEventControlSetDelayMS(TestEventControl, 1000);
 }
 
 

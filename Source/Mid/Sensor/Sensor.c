@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/Sensor/Sensor.h>
 #include "app/framework/include/af.h"
@@ -51,7 +51,7 @@ sensorData_str gSensor;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void pvSensorHandle(int8u *data);
+void pvSensorHandle(byte_t *data);
 void errorMidSensorCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
@@ -106,7 +106,7 @@ void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutC
  *
  * @retval None
  */
-void pvSensorHandle(int8u *data){
+void pvSensorHandle(byte_t *data){
 
     CMD_BUFFER *cmd = (CMD_BUFFER*)data;
 
@@ -128,7 +128,7 @@ void pvSensorHandle(int8u *data){
 			}
 			break;
 		case CMD_ID_LUX:
-			gSensor.luxValue = (((int16u)cmd->uLuxData.high_byte_Lux<< 8) | (cmd->uLuxData.low_byte_Lux)) ;
+			gSensor.luxValue = (((word_t)cmd->uLuxData.high_byte_Lux<< 8) | (cmd->uLuxData.low_byte_Lux)) ;
 			if(pvSensorLuxValueCallback != NULL){
 				pvSensorLuxValueCallback(gSensor.luxValue);
 
@@ -140,7 +140,7 @@ void pvSensorHandle(int8u *data){
 			}
 			break;
 		case CMD_ID_LIGHT_THRES:
-			gSensor.lightThress = (((int16u)cmd->uLightThressData.high_byte_LightThress<< 8)
+			gSensor.lightThress = (((word_t)cmd->uLightThressData.high_byte_LightThress<< 8)
 			        | (cmd->uLightThressData.low_byte_LightThress));
 			if(pvSensorLightThressCallback != NULL){
 				pvSensorLightThressCallback(gSensor.lightThress);
@@ -151,9 +151,9 @@ void pvSensorHandle(int8u *data){
 			}
 			break;;
 		case CMD_ID_TIMEOUT:
-			gSensor.pirTimeout = (((int32u)cmd->uTimeThressData.highest_byte_TimeThress<< 24) |
-			        ((int32u)cmd->uTimeThressData.high_byte_TimeThress<<16) |
-			        ((int32u)cmd->uTimeThressData.low_byte_TimeThress<< 8) |
+			gSensor.pirTimeout = (((uint_t)cmd->uTimeThressData.highest_byte_TimeThress<< 24) |
+			        ((uint_t)cmd->uTimeThressData.high_byte_TimeThress<<16) |
+			        ((uint_t)cmd->uTimeThressData.low_byte_TimeThress<< 8) |
 			        cmd->uTimeThressData.lowest_byte_TimeThress);
 			if(pvSensorPirTimeoutCallback != NULL){
 				pvSensorPirTimeoutCallback(gSensor.pirTimeout);
@@ -192,7 +192,7 @@ void errorMidSensorCallbackPrint(void){
  * @retval None
  */
 void getLuxValue(void){
-	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LUX,NULL);
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LUX,NULL, NULL);
 }
 /**
  * @func
@@ -204,6 +204,6 @@ void getLuxValue(void){
  * @retval None
  */
 void getPirState(void){
-	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_PIR,NULL);
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_PIR,NULL, NULL);
 }
 

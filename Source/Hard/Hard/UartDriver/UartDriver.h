@@ -24,42 +24,75 @@
 /******************************************************************************/
 
 #include "app/framework/include/af.h"
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-typedef void (*typeGetDataCallback)(int8u *data);
-typedef void (*typeUartAckCallback)(void);
-typedef void (*typeUartNackCallback)(void);
+#define MAX_BUFF              10
+#define MAX_LENGTH_CMD_TX     20
+#define PERIOD_RX_MS          70    // check receiver per T =70 milliseconds
+#define TIME_WAIT_RES         50    //  wait response after n = 50 times check receiver. n x T milliseconds
 
+#define RX_TIMEOUT            500  // 500ms
 
-typedef struct{
-	int8u port;
-	SerialBaudRate rate;
-	SerialParity parity;
-	int8u stopBits;
-	typeGetDataCallback GetDataCallback;
-	typeUartAckCallback UartAckCallback;
-	typeUartNackCallback UartNackCallback;
-}uartDriverInitData_str;
+#define CXOR_INIT_VAL         0xFF
+#define RX_BUFF               1024
+#define MaxLengthUARTPacket   15
+#define MinLengthUARTPacket   4
 
+#define PacketSOF_1           0xAA
+#define PacketSOF_2           0x55
+#define PacketACK             0x06
+#define PacketNACK            0x15
 
+typedef struct _UART_RX_STR_{
+	byte_t DataReceiverStep;
+	byte_t DataPacketLength;
+	byte_t Data[RX_BUFF];
+	byte_t ReceiverByteCount;
+}uartRx_Str;
+
+typedef struct _UNIT_BUFF_{
+	byte_t dataTx[MAX_LENGTH_CMD_TX];
+	byte_t lengthTx;
+	byteCallbackFunc callbackFuncTx;
+} UNIT_BUFF, *UNIT_BUFF_p;
+
+typedef struct _SEQUENCE_BUFF_{
+	byte_t topBuff;
+	byte_t bottomBuff;
+	byte_t numberUnit;
+} SEQUENCE_BUFF, *SEQUENCE_BUFF_p;
 
 typedef enum{
-	pirNoMotion = 0x00,
-	pirMotion = 0x01,
-}PirState_enum;
+	buffFull,
+	buffEmpty,
+	buffSuccess,
+} RESULT_BUFF;
 
-#define	leUpdateButtonCmd 		 	 5
-#define	leUpdatePirStatecmd 		 5
-#define	leUpdateLuxCmd 		 		 6
-#define	leUpdateLigthThressCmd 		 6
-#define	leUpdateTimeoutCmd 		 	 6
-#define	leSetupLedCmd 		 		 9
-#define	leSetupRelayCmd      		 5
-#define leSetupLightThressCmd		 6
-#define leSetupTimeThressCmd		 6
-#define leRequestCmd				 4
+typedef enum{
+	stateSOF1,
+	stateSOF2,
+	stateLength,
+	stateData,
+	stateCheckXor,
+} RECEIVER_STEP;
+
+typedef enum{
+	resultRxACK,
+	resultRxNACK,
+	resultRxSUCCESS,
+	resultRxErr,
+	resultRxTimeout,
+	resultRxIdle,
+}RESULT_RX;
+
+typedef enum{
+	resultTxSUCCESS,
+	resultTxFALSE,
+	resultTxTimeout,
+}RESULT_TX;
 
 
 
@@ -70,18 +103,16 @@ typedef enum{
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-// Event control struct declaration
+
 extern EmberEventControl uartGetCmdEventControl;
+extern EmberEventControl uartSendCmdEventControl;
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 
-void uartDriverInit(uartDriverInitData_str uartDriverInitData);
-void uartGetCommand(void);
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u cmdParam[10]);
+void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit);
+byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc TxCallbackFunc);
 
 
 /**

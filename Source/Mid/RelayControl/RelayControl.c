@@ -21,7 +21,7 @@
 
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-#include <Source/Hard/Hard/UartDriver/UartDriver.h>
+//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/RelayControl/RelayControl.h>
 #include "app/framework/include/af.h"
@@ -41,7 +41,7 @@
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeRelayCallback pvRelayCallback;
+typeRelayCallback pvRelayCallbackHandle;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -50,7 +50,7 @@ RelayData_str gRelay;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void relayHandler(int8u *data);
+void relayHandler(byte_t *data);
 void errorMidRelayCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
@@ -62,7 +62,7 @@ void relayGetState(void);
 void relayCallbackInit(typeRelayCallback relayCallback){
 	cmdParseRelayCallbackInit(relayHandler);
 	if(relayCallback != NULL){
-		pvRelayCallback = relayCallback;
+		pvRelayCallbackHandle = relayCallback;
 	}
 }
 /**
@@ -74,9 +74,9 @@ void relayCallbackInit(typeRelayCallback relayCallback){
  *
  * @retval None
  */
-void relayHandler(int8u *data){
+void relayHandler(byte_t *data){
 
-	int8u relayState = (int8u)*data;
+	byte_t relayState = (byte_t)*data;
 
 	if(relayState == RELAY_ON_STATE){
 		gRelay.relayCurrentState = boolRlOn;
@@ -84,8 +84,8 @@ void relayHandler(int8u *data){
 	else if(relayState == RELAY_OFF_STATE){
 		gRelay.relayCurrentState = boolRlOff;
 	}
-	if(pvRelayCallback != NULL){
-		pvRelayCallback(gRelay.relayCurrentState);
+	if(pvRelayCallbackHandle != NULL){
+		pvRelayCallbackHandle(gRelay.relayCurrentState);
 		DBG_RELAY_PRINT("    pvRelayCallback \n\r");
 	}
 	else{
@@ -120,7 +120,7 @@ void errorMidRelayCallbackPrint(void){
  */
 void relayGetState(void){
 	cmdParseRelayCallbackInit(relayHandler);
-	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_RELAY,NULL);
+	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_RELAY,NULL, NULL);
 }
 /**
  * @func

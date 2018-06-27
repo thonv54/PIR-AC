@@ -25,18 +25,12 @@
 #include "stack/include/event.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
-
-#define stateSOF1   0
-#define stateSOF2   1
-#define stateLen    2
-#define stateData   3
-#define stateCheckXor   4
-
+#define DebugUartDriver
 
 #ifdef DebugUartDriver
 #define DBG_UART_DRIVER_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
@@ -45,281 +39,391 @@
 #endif
 
 
-
-#define PacketSOF_1 0xAA
-#define PacketSOF_2 0x55
-#define PacketACK 0x06
-#define PacketNACK 0x15
-
-
-#define RX_BUFF	1024
-
-#define MaximmumLengthPerUartPacket 100
-//#define DebugUartDriver
-
-
-typedef struct{
-	int8u DataReceiverStep;
-	int8u DataPacketLength;
-	int8u Data[RX_BUFF];
-	int8u ReceiverByteCnt;
-}uartRx_Str;
-
-
-
-
-
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 
-uartRx_Str g_UartRx;
-uartDriverInitData_str g_pUartDriverInitData;
+static bool_t bTxActive = FALSE;
+static bool_t bRxActive = FALSE;
+static byte_t timeCheckRes = 0;
+static byte_t portUART;
 
-int8u g_byTxSeq = 0; // Seq cua ban tin gui di, tang dan sau moi 1 ban tin gui di
+word_t timeoutRx;
+byte_t packetCheckXor;
+
+byteCallbackFunc pvTxResultCallback = NULL;
+byte_pCallbackFunc pvRxHandleCallback = NULL;
+
+UNIT_BUFF TxBuffSend [MAX_BUFF];
+SEQUENCE_BUFF TxBuffSeq;
+
+static uartRx_Str uartRxStruct;
+
+
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-// Event control struct declaration
+
 EmberEventControl uartGetCmdEventControl;
+EmberEventControl uartSendCmdEventControl;
+
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 
-
-
-
-// Event function forward declaration
+byte_t uartGetCommand(void);
 void uartGetCmdEventFunction(void);
-
+void uartSendCmdEventFunction(void);
+void ResultTxTimeout(byte_t pResponse);
+void SendDataFromBottomBuffTx(void);
+void InitBuffTx (void);
+void uartTimeoutReset(void);
+uint_t uartGetElapsedTime(uint_t timeStart);
 void uartSendAck(void);
 void uartSendNack(void);
-
-void errorUartDriverCallbackPrint(void);
 
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void uartDriverInit(uartDriverInitData_str uartDriverInitData);
-void uartGetCommand(void);
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u *cmdParam);
+
+void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit);
+byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc TxCallbackFunc);
 
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-void uartDriverInit(uartDriverInitData_str uartDriverInitData){
-
-	g_UartRx.DataReceiverStep = 0;
-	g_UartRx.DataPacketLength = 0;
-	g_UartRx.ReceiverByteCnt = 0;
-
-	g_pUartDriverInitData.port = uartDriverInitData.port;
-	g_pUartDriverInitData.parity = uartDriverInitData.parity;
-	g_pUartDriverInitData.rate = uartDriverInitData.rate;
-	g_pUartDriverInitData.stopBits = uartDriverInitData.stopBits;
-
-	if(uartDriverInitData.GetDataCallback != NULL){
-		g_pUartDriverInitData.GetDataCallback = uartDriverInitData.GetDataCallback;
-	}
-	if(uartDriverInitData.UartAckCallback != NULL){
-		g_pUartDriverInitData.UartAckCallback = uartDriverInitData.UartAckCallback;
-	}
-	if(uartDriverInitData.UartNackCallback != NULL){
-		g_pUartDriverInitData.UartNackCallback = uartDriverInitData.UartNackCallback;
+void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit){
+	portUART = portUartInit;
+	if (pRxCallbackFuncInit != NULL){
+		pvRxHandleCallback = pRxCallbackFuncInit;
 	}
 
-
+	uartRxStruct.DataReceiverStep = stateSOF1;
+	InitBuffTx();
+	emberEventControlSetActive(uartGetCmdEventControl);
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
-void uartGetCommand(void){
-	int16u wNumOfByteReceiver;
-	int8u  byReadSerialData;
 
-	wNumOfByteReceiver = emberSerialReadAvailable(g_pUartDriverInitData.port);
+byte_t uartGetCommand(void){
+	byte_t wNumOfByteReceiver;
+	byte_t  byReadSerialData;
+	byte_t  byRetVal = resultRxIdle;
 
-	for(int8u i = 0; i<wNumOfByteReceiver; wNumOfByteReceiver--){
-		(void)emberSerialReadByte(g_pUartDriverInitData.port,&byReadSerialData);
-		DBG_UART_DRIVER_PRINT("%X",byReadSerialData);
-		switch (g_UartRx.DataReceiverStep) {
+	wNumOfByteReceiver = emberSerialReadAvailable(portUART); //Number of byte in Buffer
+
+	while ((wNumOfByteReceiver > 0)&&(byRetVal == resultRxIdle)){
+		(void)emberSerialReadByte(portUART,&byReadSerialData);
+
+		//DBG_UART_DRIVER_PRINT("%X",byReadSerialData);
+
+		switch (uartRxStruct.DataReceiverStep){
 		case stateSOF1:
-			if (byReadSerialData == PacketSOF_1) {
-				g_UartRx.DataReceiverStep = stateSOF2;
+			if (PacketSOF_1 == byReadSerialData){
+				uartRxStruct.DataReceiverStep = stateSOF2;
+				bRxActive = TRUE;                    // Receiver active
+				uartTimeoutReset();       //  Reset time
 			}
-			else{
-				g_UartRx.DataReceiverStep = stateSOF1;
-				if(byReadSerialData == PacketACK){
-					if (g_pUartDriverInitData.UartAckCallback != NULL){
-						g_pUartDriverInitData.UartAckCallback();
-					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
-				}
-				else if(byReadSerialData == PacketNACK){
-					if (g_pUartDriverInitData.UartNackCallback != NULL){
-						g_pUartDriverInitData.UartNackCallback();
-					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
-				}
+			else if (PacketACK == byReadSerialData){
+				byRetVal = resultRxACK;
 			}
+			else if (PacketNACK == byReadSerialData){
+				byRetVal = resultRxNACK;
+			}
+			else; // None
 			break;
 		case stateSOF2:
-			if (byReadSerialData == PacketSOF_2) {
-				g_UartRx.DataReceiverStep =  stateLen;
-			}
-			else{
-				g_UartRx.DataReceiverStep = stateSOF1;
-			}
-			break;
-		case stateLen:
-			g_UartRx.DataPacketLength = byReadSerialData;
-			if (g_UartRx.DataPacketLength > MaximmumLengthPerUartPacket) {
-				g_UartRx.DataReceiverStep = stateSOF1;
+			if (PacketSOF_2 == byReadSerialData){
+				uartRxStruct.DataReceiverStep = stateLength;
+				uartTimeoutReset();
 			}
 			else {
-				g_UartRx.DataReceiverStep = stateData;
+				uartRxStruct.DataReceiverStep = stateSOF1;
+				byRetVal = resultRxErr;
+			}
+			break;
+		case stateLength:
+			uartRxStruct.DataPacketLength = byReadSerialData;
+			if ((uartRxStruct.DataPacketLength > MaxLengthUARTPacket)||
+				(uartRxStruct.DataPacketLength < MinLengthUARTPacket)){
+
+				uartRxStruct.DataReceiverStep = stateSOF1;
+				byRetVal = resultRxErr;
+			}
+			else{
+				uartRxStruct.DataReceiverStep = stateData;
+				packetCheckXor = CXOR_INIT_VAL;
+				uartRxStruct.ReceiverByteCount = 0;
+				uartTimeoutReset();
 			}
 			break;
 		case stateData:
-			if (g_UartRx.ReceiverByteCnt < g_UartRx.DataPacketLength-1) {
-				g_UartRx.Data[g_UartRx.ReceiverByteCnt] = byReadSerialData;
-				g_UartRx.ReceiverByteCnt++;
+			if (uartRxStruct.ReceiverByteCount < uartRxStruct.DataPacketLength - 1){
+				uartRxStruct.Data[uartRxStruct.ReceiverByteCount] = byReadSerialData;
+				packetCheckXor ^= byReadSerialData;
+				uartRxStruct.ReceiverByteCount ++;
+				uartTimeoutReset();
 			}
-			else {
-				int8u packetCheckXor;
-				int8u checkXor = 0xFF;
-				packetCheckXor = byReadSerialData;
-				{
-					for (int8u j = 0; j < g_UartRx.DataPacketLength -1; j++) {
-						checkXor = checkXor ^ g_UartRx.Data[j];
-					}
-				}
-				if (packetCheckXor == checkXor) {
-					if(g_pUartDriverInitData.GetDataCallback != NULL){
-						g_pUartDriverInitData.GetDataCallback(g_UartRx.Data);
-					}
-					else{
-						errorUartDriverCallbackPrint();
-					}
+			else{
+				uartRxStruct.DataReceiverStep = stateSOF1;
+				bRxActive = FALSE;                  // Receiver complete
 
-					wNumOfByteReceiver = 0; // end of For case
-					uartSendAck();
+				if (packetCheckXor == byReadSerialData){
+					byRetVal = resultRxSUCCESS;
 				}
-				else {
-					uartSendNack();
-					DBG_UART_DRIVER_PRINT("    Length of Packet data :  %u \n\r",g_UartRx.DataPacketLength);
-					DBG_UART_DRIVER_PRINT("		Packet data :");
-				for(int8u i=0; i< g_UartRx.DataPacketLength - 1; i++){
-					DBG_UART_DRIVER_PRINT("%X ",g_UartRx.Data[i]);
-				}
-				DBG_UART_DRIVER_PRINT("		\n\r");
-
-				}
-
-				g_UartRx.DataPacketLength = 0;
-				g_UartRx.DataReceiverStep = stateSOF1;
-				g_UartRx.ReceiverByteCnt = 0;
+				else byRetVal = resultRxErr;
 			}
 			break;
 		default:
-            g_UartRx.DataPacketLength = 0;
-            g_UartRx.DataReceiverStep = stateSOF1;
-            g_UartRx.ReceiverByteCnt = 0;
+			uartRxStruct.DataReceiverStep = stateSOF1;
 			break;
 		}
+		wNumOfByteReceiver--;
+	}
+
+	if(byRetVal == resultRxIdle){
+		if ((bRxActive) && (uartGetElapsedTime(timeoutRx) >= RX_TIMEOUT)){
+			bRxActive = FALSE;                     // Receiver complete
+			uartRxStruct.DataReceiverStep = stateSOF1;
+			byRetVal = resultRxTimeout;
+		}
+	}
+
+	return byRetVal;
+}
+
+/**
+ * @function      :
+ *
+ * @brief         :
+ *
+ * @parameter     :
+ *
+ * @return value  :
+ */
+
+void uartGetCmdEventFunction(void){
+	byte_t resultRx;
+	resultRx = uartGetCommand();
+	if (resultRx != resultRxIdle){
+		switch (resultRx){
+		case resultRxACK:
+			ResultTxTimeout(resultTxSUCCESS); // resultTx Success
+			DBG_UART_DRIVER_PRINT("ACK! \n");
+			break;
+
+		case resultRxNACK:
+			ResultTxTimeout(resultTxFALSE);  // resultTx FALSE
+			DBG_UART_DRIVER_PRINT("NACK! \n");
+			break;
+
+		case resultRxSUCCESS:                            // Send ACK
+			if (pvRxHandleCallback != NULL){
+				pvRxHandleCallback(uartRxStruct.Data);  // Callback function handle data
+			}
+			DBG_UART_DRIVER_PRINT("Received successfully! \n");
+			uartSendAck();
+			break;
+
+		case resultRxErr:
+			DBG_UART_DRIVER_PRINT("Received failed! \n");
+			uartSendNack();                             // Send NACK
+			break;
+
+		case resultRxTimeout:
+			DBG_UART_DRIVER_PRINT("Timeout Receiver! \n");
+			uartSendNack();                             // Send NACK
+			break;
+
+		default:
+			DBG_UART_DRIVER_PRINT("Result invalid!\n");
+			break;
+		}
+	}
+
+	if (bTxActive){
+		timeCheckRes ++;
+		if (TIME_WAIT_RES == timeCheckRes){
+			ResultTxTimeout (resultTxTimeout);
+		}
+	}
+
+	emberEventControlSetInactive(uartGetCmdEventControl);
+	emberEventControlSetDelayMS(uartGetCmdEventControl,PERIOD_RX_MS); // 70ms check Buffer and Handle
+}
+
+/**
+ * @function     :
+ *
+ * @brief        :
+ *
+ * @parameter    :
+ *
+ * @return value :
+ */
+
+void ResultTxTimeout(byte_t pResponse){
+	byte_t result;
+	if (pResponse == resultTxSUCCESS){
+		result = resultTxSUCCESS;
+	}
+	else{
+		result = resultTxFALSE;
+	}
+	if (bTxActive){
+		bTxActive = FALSE;
+		timeCheckRes = 0;
+		if (pvTxResultCallback != NULL){
+			byteCallbackFunc txResultFunc = pvTxResultCallback;
+			pvTxResultCallback = NULL;
+			txResultFunc(result);
+		}
+
+		TxBuffSeq.numberUnit --;
+		if (TxBuffSeq.numberUnit >0) emberEventControlSetActive (uartSendCmdEventControl);
 	}
 }
 
 
-// Event function stub
-void uartGetCmdEventFunction(void) {
-	emberEventControlSetInactive(uartGetCmdEventControl);
-	emberEventControlSetDelayMS(uartGetCmdEventControl,70); // 70ms 1 lan kiem tra buffer uart va xu ly
-	uartGetCommand();
+/**
+ * @function     :
+ *
+ * @brief        :
+ *
+ * @parameter    :
+ *
+ * @return value :
+ */
+
+
+byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc callbackFuntion){
+	if (TxBuffSeq.numberUnit == MAX_BUFF){
+		DBG_UART_DRIVER_PRINT("BuffFull.\n");
+		return buffFull;
+	}
+
+	UNIT_BUFF* unitBuff = &TxBuffSend[TxBuffSeq.topBuff];
+	unitBuff -> lengthTx = lengthData;
+	memcpy ((byte_p) &(unitBuff->dataTx), data, lengthData);
+	unitBuff -> callbackFuncTx = callbackFuntion;
+
+	TxBuffSeq.topBuff = (TxBuffSeq.topBuff + 1) % MAX_BUFF;
+	TxBuffSeq.numberUnit ++;
+
+	if (!bTxActive) // First send request
+		emberEventControlSetActive (uartSendCmdEventControl);
+	return buffSuccess;
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
-void uartSendCommand(int8u txPacketLength,
-					 int8u type,
-					 int8u cmdId,
-					 int8u *cmdParam){
 
-	int8u packetCheckXor;
+void SendDataFromBottomBuffTx(void){
+	UNIT_BUFF* dataTx = &TxBuffSend[TxBuffSeq.bottomBuff];
+	emberSerialWriteData(portUART, (byte_p) &(dataTx->dataTx), dataTx->lengthTx);
 
-	packetCheckXor = 0xFF ^ g_byTxSeq ^ type ^ cmdId ^ xorStr(cmdParam, (txPacketLength - 4));
-
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_1);  // 1byte SOF
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketSOF_2);  // 1byte SOF
-	emberSerialWriteByte(g_pUartDriverInitData.port,txPacketLength);  //1byte length
-	emberSerialWriteByte(g_pUartDriverInitData.port,g_byTxSeq);  //1byte g_byTxSeq
-	emberSerialWriteByte(g_pUartDriverInitData.port,type);  //1byte type
-	emberSerialWriteByte(g_pUartDriverInitData.port,cmdId);			//1byte cmd id
-	emberSerialWriteData(g_pUartDriverInitData.port,cmdParam,(txPacketLength - 4));  //dataLength = packetLength - 4
-	emberSerialWriteByte(g_pUartDriverInitData.port,packetCheckXor); // 1byte Xor
-	g_byTxSeq++;
-
+	pvTxResultCallback = dataTx->callbackFuncTx;
+	TxBuffSeq.bottomBuff = (TxBuffSeq.bottomBuff + 1) % MAX_BUFF;
 }
+
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
+void uartSendCmdEventFunction(void){
+	if (TxBuffSeq.numberUnit == 0){
+		DBG_UART_DRIVER_PRINT("BuffEmpty.\n");
+	}
+	else{
+		SendDataFromBottomBuffTx();
+		bTxActive = TRUE;
+	}
+	emberEventControlSetInactive (uartSendCmdEventControl);
+}
+
+/**
+ * @function      :
+ *
+ * @brief         :
+ *
+ * @parameter     :
+ *
+ * @return value  :
+ */
+
+void InitBuffTx (void){
+	byte_p initBuff = (byte_p) TxBuffSend;
+	for ( word_t i = 0; i < sizeof (TxBuffSend); i++ ){
+		*initBuff ++ = 0;
+	}
+
+	TxBuffSeq.bottomBuff = TxBuffSeq.topBuff = TxBuffSeq.numberUnit = 0;
+}
+
+
+/**
+ * @function      :
+ *
+ * @brief         :
+ *
+ * @parameter     :
+ *
+ * @return value  :
+ */
+
+void uartTimeoutReset(){
+	timeoutRx = halCommonGetInt32uMillisecondTick();
+}
+
+/**
+ * @function      :
+ *
+ * @brief         :
+ *
+ * @parameter     :
+ *
+ * @return value  :
+ */
+
+uint_t uartGetElapsedTime(uint_t timeStart){
+	return (halCommonGetInt32uMillisecondTick() - timeStart);
+}
+
+/**
+ * @function      :
+ *
+ * @brief         :
+ *
+ * @parameter     :
+ *
+ * @return value  :
+ */
+
 void uartSendAck(void){
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketACK);
-}/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
+	emberSerialWriteByte(portUART,PacketACK);
+}
 void uartSendNack(void){
-	emberSerialWriteByte(g_pUartDriverInitData.port,PacketNACK);
+	emberSerialWriteByte(portUART,PacketNACK);
 }
-
-void errorUartDriverCallbackPrint(void){
-	DBG_UART_DRIVER_PRINT("    CallbackInUartDriverError \n\r");
-}
-
-
-
-
-
 
 
 

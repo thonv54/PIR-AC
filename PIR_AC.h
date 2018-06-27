@@ -8,7 +8,7 @@
 
 
 /**** Included Header Section ****/
-#define  EMBER_APPLICATION_HAS_INCOMING_MANY_TO_ONE_ROUTE_REQUEST_HANDLER
+
 /**** ZCL Section ****/
 #define ZA_PROMPT "PIR_AC"
 #define ZCL_USING_BASIC_CLUSTER_SERVER
@@ -161,31 +161,29 @@
 // Use this macro to check if ADC plugin is included
 #define EMBER_AF_PLUGIN_ADC
 
-// Use this macro to check if Antenna Stub plugin is included
-#define EMBER_AF_PLUGIN_ANTENNA_STUB
-
-// Use this macro to check if Debug JTAG plugin is included
-#define EMBER_AF_PLUGIN_DEBUG_JTAG
-
-// Use this macro to check if HAL Library plugin is included
-#define EMBER_AF_PLUGIN_HAL_LIBRARY
-
-// Use this macro to check if Serial plugin is included
-#define EMBER_AF_PLUGIN_SERIAL
-
-// Use this macro to check if Simulated EEPROM version 1 Library plugin is included
-#define EMBER_AF_PLUGIN_SIM_EEPROM1
-// User options for plugin Simulated EEPROM version 1 Library
-
 // Use this macro to check if Address Table plugin is included
 #define EMBER_AF_PLUGIN_ADDRESS_TABLE
 // User options for plugin Address Table
 #define EMBER_AF_PLUGIN_ADDRESS_TABLE_SIZE 32
 #define EMBER_AF_PLUGIN_ADDRESS_TABLE_TRUST_CENTER_CACHE_SIZE 2
 
+// Use this macro to check if Antenna Stub plugin is included
+#define EMBER_AF_PLUGIN_ANTENNA_STUB
+
+// Use this macro to check if Binding Table Library plugin is included
+#define EMBER_AF_PLUGIN_BINDING_TABLE_LIBRARY
+// User options for plugin Binding Table Library
+#define EMBER_BINDING_TABLE_SIZE 10
+
 // Use this macro to check if Counters plugin is included
 #define EMBER_AF_PLUGIN_COUNTERS
 // User options for plugin Counters
+
+// Use this macro to check if Debug Basic Library plugin is included
+#define EMBER_AF_PLUGIN_DEBUG_BASIC_LIBRARY
+
+// Use this macro to check if Debug JTAG plugin is included
+#define EMBER_AF_PLUGIN_DEBUG_JTAG
 
 // Use this macro to check if Ember Minimal Printf plugin is included
 #define EMBER_AF_PLUGIN_EMBER_MINIMAL_PRINTF
@@ -195,6 +193,9 @@
 
 // Use this macro to check if Groups Server Cluster plugin is included
 #define EMBER_AF_PLUGIN_GROUPS_SERVER
+
+// Use this macro to check if HAL Library plugin is included
+#define EMBER_AF_PLUGIN_HAL_LIBRARY
 
 // Use this macro to check if Identify Cluster plugin is included
 #define EMBER_AF_PLUGIN_IDENTIFY
@@ -214,6 +215,12 @@
 #define EMBER_AF_PLUGIN_NETWORK_FIND_DURATION 5
 #define EMBER_AF_PLUGIN_NETWORK_FIND_JOINABLE_SCAN_TIMEOUT_MINUTES 1
 
+// Use this macro to check if Packet Validate Library plugin is included
+#define EMBER_AF_PLUGIN_PACKET_VALIDATE_LIBRARY
+
+// Use this macro to check if RAIL Library plugin is included
+#define EMBER_AF_PLUGIN_RAIL_LIBRARY
+
 // Use this macro to check if Reporting plugin is included
 #define EMBER_AF_PLUGIN_REPORTING
 // User options for plugin Reporting
@@ -231,24 +238,20 @@
 #define EMBER_AF_PLUGIN_SCENES_TABLE_SIZE 3
 #define EMBER_AF_PLUGIN_SCENES_USE_TOKENS
 
-// Use this macro to check if Simple Main plugin is included
-#define EMBER_AF_PLUGIN_SIMPLE_MAIN
-
-// Use this macro to check if Binding Table Library plugin is included
-#define EMBER_AF_PLUGIN_BINDING_TABLE_LIBRARY
-// User options for plugin Binding Table Library
-#define EMBER_BINDING_TABLE_SIZE 10
-
-// Use this macro to check if Debug Basic Library plugin is included
-#define EMBER_AF_PLUGIN_DEBUG_BASIC_LIBRARY
-
-// Use this macro to check if Packet Validate Library plugin is included
-#define EMBER_AF_PLUGIN_PACKET_VALIDATE_LIBRARY
-
 // Use this macro to check if Security Core Library plugin is included
 #define EMBER_AF_PLUGIN_SECURITY_LIBRARY_CORE
 // User options for plugin Security Core Library
 #define EMBER_TRANSIENT_KEY_TIMEOUT_S 300
+
+// Use this macro to check if Serial plugin is included
+#define EMBER_AF_PLUGIN_SERIAL
+
+// Use this macro to check if Simulated EEPROM version 1 Library plugin is included
+#define EMBER_AF_PLUGIN_SIM_EEPROM1
+// User options for plugin Simulated EEPROM version 1 Library
+
+// Use this macro to check if Simple Main plugin is included
+#define EMBER_AF_PLUGIN_SIMPLE_MAIN
 
 // Use this macro to check if ZigBee PRO Stack Library plugin is included
 #define EMBER_AF_PLUGIN_ZIGBEE_PRO_LIBRARY
@@ -262,9 +265,6 @@
 #define EMBER_BROADCAST_TABLE_SIZE 15
 #define EMBER_NEIGHBOR_TABLE_SIZE 16
 
-// Use this macro to check if RAIL Library plugin is included
-#define EMBER_AF_PLUGIN_RAIL_LIBRARY
-
 
 // Generated API headers
 
@@ -277,14 +277,14 @@
 // API antenna from Antenna Stub plugin
 #define EMBER_AF_API_ANTENNA "platform/base/hal/plugin/antenna/antenna.h"
 
-// API serial from Serial plugin
-#define EMBER_AF_API_SERIAL "platform/base/hal/plugin/serial/serial.h"
+// API rail-library from RAIL Library plugin
+#define EMBER_AF_API_RAIL_LIBRARY "platform/radio/rail_lib/common/rail.h"
 
 // API scan-dispatch from Scan Dispatch plugin
 #define EMBER_AF_API_SCAN_DISPATCH "protocol/zigbee_6.1/app/framework/plugin/scan-dispatch/scan-dispatch.h"
 
-// API rail-library from RAIL Library plugin
-#define EMBER_AF_API_RAIL_LIBRARY "platform/radio/rail_lib/common/rail.h"
+// API serial from Serial plugin
+#define EMBER_AF_API_SERIAL "platform/base/hal/plugin/serial/serial.h"
 
 
 // Custom macros

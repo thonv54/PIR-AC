@@ -379,7 +379,6 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
-          <state>$PROJ_DIR$\1_SourceCode</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
@@ -711,7 +710,6 @@
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\halconfig</state>
           <state>$PROJ_DIR$\..\..\..\hardware\kit\common\bsp</state>
           <state>$PROJ_DIR$\hal-config</state>
-          <state>$PROJ_DIR$\1_SourceCode</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ieee802154</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\protocol\ble</state>
           <state>$PROJ_DIR$\..\..\..\platform\radio\rail_lib\common</state>
@@ -1197,9 +1195,7 @@
   </group>
   <group>
     <name>Libraries</name>
-    <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\hal-library-cortexm3-iar-efr32mg1p-rail\hal-library.a</name></file>
-<file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\sim-eeprom1-library-cortexm3-iar-efr32mg1p-rail\sim-eeprom1-library.a</name></file>
-<file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\binding-table-library-cortexm3-iar-efr32mg1p-rail\binding-table-library.a</name></file>
+    <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\binding-table-library-cortexm3-iar-efr32mg1p-rail\binding-table-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\cbke-163k1-stub-library-cortexm3-iar-efr32mg1p-rail\cbke-163k1-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\cbke-283k1-stub-library-cortexm3-iar-efr32mg1p-rail\cbke-283k1-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\cbke-stub-library-cortexm3-iar-efr32mg1p-rail\cbke-stub-library.a</name></file>
@@ -1210,56 +1206,45 @@
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\debug-extended-stub-library-cortexm3-iar-efr32mg1p-rail\debug-extended-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\end-device-bind-stub-library-cortexm3-iar-efr32mg1p-rail\end-device-bind-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\gp-stub-library-cortexm3-iar-efr32mg1p-rail\gp-stub-library.a</name></file>
+<file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\hal-library-cortexm3-iar-efr32mg1p-rail\hal-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\install-code-library-stub-cortexm3-iar-efr32mg1p-rail\install-code-library-stub.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\multi-network-stub-library-cortexm3-iar-efr32mg1p-rail\multi-network-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\packet-validate-library-cortexm3-iar-efr32mg1p-rail\packet-validate-library.a</name></file>
+<file><name>$PROJ_DIR$/../../../platform\radio\rail_lib\autogen\librail_release\librail_efr32xg1_iar_release.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\security-library-core-cortexm3-iar-efr32mg1p-rail\security-library-core.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\security-library-link-keys-stub-cortexm3-iar-efr32mg1p-rail\security-library-link-keys-stub.a</name></file>
+<file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\sim-eeprom1-library-cortexm3-iar-efr32mg1p-rail\sim-eeprom1-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\zigbee-pro-stack-cortexm3-iar-efr32mg1p-rail\zigbee-pro-stack.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\zigbee-r22-support-stub-library-cortexm3-iar-efr32mg1p-rail\zigbee-r22-support-stub-library.a</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\build\zll-stub-library-cortexm3-iar-efr32mg1p-rail\zll-stub-library.a</name></file>
-<file><name>$PROJ_DIR$/../../../platform\radio\rail_lib\autogen\librail_release\librail_efr32xg1_iar_release.a</name></file>
 
     
     
   </group>
   <file><name>$PROJ_DIR$/../../../app/builder/PIR_AC/PIR_AC_callbacks.c</name></file>
 
-  <file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\MainApp\Main\AppMain.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeJoinAndLeaveNwk\ZigbeeJoinAndLeaveNwk.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeReceiver\ZigbeeReceiver.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\0_App\PreApp\ZigbeeSend\ZigbeeSend.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Button\MidButton.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\LedControl\LedControl.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\RelayControl\RelayControl.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\1_Mid\Sensor\Sensor.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\2_Hard\Hard\UartDriver\UartDriver.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\2_Hard\SubHard\UartCmdParse\UartCmdParse.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\CustomLib\macro.c</name></file>
-<file><name>$PROJ_DIR$/../../../app\builder\PIR_AC\1_SourceCode\CustomLib\Template.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\cortexm\efm32\com.c</name></file>
+  <file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\cortexm\efm32\com.c</name></file>
 <file><name>$PROJ_DIR$/../../../platform\emdrv\uartdrv\src\uartdrv.c</name></file>
 
 
   <file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\adc\adc-efr32.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\antenna-stub\antenna-stub.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\debug-jtag\debug-jtag-efr32.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\micro\cortexm3\efm32\hal-config.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\micro\cortexm3\efm32\hal-config-gpio.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\coexistence\coexistence-efr32.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\serial.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\sim-eeprom1\sim-eeprom.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\address-table\address-table.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\address-table\address-table-cli.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\antenna-stub\antenna-stub.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\counters\counters-cli.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\counters\counters-ota.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\counters\counters-soc.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\debug\rtt\SEGGER_RTT.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\debug-jtag\debug-jtag-efr32.c</name></file>
 <file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\ember-printf.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\form-and-join\form-and-join-afv2.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\util\common\form-and-join.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\util\common\form-and-join-node-adapter.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\groups-server\groups-server.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\groups-server\groups-server-cli.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\micro\cortexm3\efm32\hal-config.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\micro\cortexm3\efm32\hal-config-gpio.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\coexistence\coexistence-efr32.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\identify\identify.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\identify\identify-cli.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\identify-feedback\identify-feedback.c</name></file>
@@ -1271,8 +1256,9 @@
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\scan-dispatch\scan-dispatch.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\scenes\scenes.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\scenes\scenes-cli.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\serial\serial.c</name></file>
+<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\sim-eeprom1\sim-eeprom.c</name></file>
 <file><name>$PROJ_DIR$/../../../protocol\zigbee_6.1\app\framework\plugin\simple-main\simple-main.c</name></file>
-<file><name>$PROJ_DIR$/../../../platform\base\hal\plugin\debug\rtt\SEGGER_RTT.c</name></file>
 
   <file>
     <name>$PROJ_DIR$/afv2-bookkeeping.c</name>
