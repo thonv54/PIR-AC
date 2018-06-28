@@ -23,18 +23,12 @@
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/LedControl/LedControl.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-#ifdef DebugLedControl
-#define DBG_LED_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_LED_PRINT(...)
-#endif
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -46,7 +40,6 @@ byte_t currentLedColor;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void errorMidLedCallbackPrint(void);
 void ledResponseHandle(byte_t* data);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
@@ -151,17 +144,4 @@ void ledBlink(byte_t color,
 void ledGetState(void){
 	ledResponseCallbackInit();
 	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL,NULL);
-}
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-void errorMidLedCallbackPrint(void){
-    DBG_LED_PRINT("    CallbackInMidLedError \n\r");
 }

@@ -21,7 +21,6 @@
 #include <Source/App/PreApp/ZigbeeSend/ZigbeeSend.h>
 #include <Source/App/PreApp/ZigbeeUtility/ZigbeeDefine.h>
 #include <Source/CustomLib/macro.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Mid/Button/MidButton.h>
 #include <Source/Mid/LedControl/LedControl.h>
 #include <Source/Mid/RelayControl/RelayControl.h>

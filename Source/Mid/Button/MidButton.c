@@ -19,22 +19,17 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
-
+#include <Source/Mid/LedControl/LedControl.h>
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
+#include <Source/CustomLib/debugDef.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/Button/MidButton.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
-#ifdef DebugButton
-#define DBG_BUTTON_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_BUTTON_PRINT(...)
-#endif
 
 
 typedef struct{
@@ -96,11 +91,12 @@ void buttonCallbackInit (byteCallbackFunc buttonHandleCallback){
 
 void buttonStateFromUartHandle(byte_t* data){
 
-	pvButton.ButtonCurrentState = (byte_t)*data;
+	pvButton.ButtonCurrentState = *data;
 	switch(pvButton.ButtonCurrentState){
 	case BUTTON_HOLD10s:
 		break;
 	case BUTTON_HOLD5S:
+		DBG_BUTTON_PRINT("Button hold 5s!");
 		if(pvButtonHandleCallback != NULL){
 			pvButtonHandleCallback(stHold5s);
 		}
@@ -120,6 +116,7 @@ void buttonStateFromUartHandle(byte_t* data){
 			}
 			break;
 		case BUTTON_HOLD5S:
+			DBG_BUTTON_PRINT("Button release!");
 			if(pvButtonHandleCallback != NULL){
 				pvButtonHandleCallback(rlHold5s);
 			}

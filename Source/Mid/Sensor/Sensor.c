@@ -20,7 +20,6 @@
 /******************************************************************************/
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/Sensor/Sensor.h>
 #include "app/framework/include/af.h"
@@ -30,12 +29,6 @@
 /******************************************************************************/
 
 
-
-#ifdef DebugSensor
-#define DBG_SENSOR_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_SENSOR_PRINT(...)
-#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -52,7 +45,6 @@ sensorData_str gSensor;
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void pvSensorHandle(byte_t *data);
-void errorMidSensorCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -121,10 +113,6 @@ void pvSensorHandle(byte_t *data){
 			}
 			if(pvSensorPirCallback != NULL){
 				pvSensorPirCallback(gSensor.pirCurrentState);
-				DBG_SENSOR_PRINT("    pvSensorPirCallback  \n\r");
-			}
-			else{
-				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LUX:
@@ -132,11 +120,6 @@ void pvSensorHandle(byte_t *data){
 			if(pvSensorLuxValueCallback != NULL){
 				pvSensorLuxValueCallback(gSensor.luxValue);
 
-				DBG_SENSOR_PRINT("    pvSensorLuxValueCallback  \n\r");
-
-			}
-			else{
-				errorMidSensorCallbackPrint();
 			}
 			break;
 		case CMD_ID_LIGHT_THRES:
@@ -144,10 +127,6 @@ void pvSensorHandle(byte_t *data){
 			        | (cmd->uLightThressData.low_byte_LightThress));
 			if(pvSensorLightThressCallback != NULL){
 				pvSensorLightThressCallback(gSensor.lightThress);
-				DBG_SENSOR_PRINT("    pvSensorLightThressCallback  \n\r");
-			}
-			else{
-				errorMidSensorCallbackPrint();
 			}
 			break;;
 		case CMD_ID_TIMEOUT:
@@ -157,10 +136,6 @@ void pvSensorHandle(byte_t *data){
 			        cmd->uTimeThressData.lowest_byte_TimeThress);
 			if(pvSensorPirTimeoutCallback != NULL){
 				pvSensorPirTimeoutCallback(gSensor.pirTimeout);
-				DBG_SENSOR_PRINT("    pvSensorPirTimeoutCallback  \n\r");
-			}
-			else{
-				errorMidSensorCallbackPrint();
 			}
 			break;
 		default:
@@ -170,18 +145,7 @@ void pvSensorHandle(byte_t *data){
 	gSensor.pirLastState = gSensor.pirCurrentState;
 }
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-void errorMidSensorCallbackPrint(void){
-    DBG_SENSOR_PRINT("    CallbackInMidSensorError \n\r");
-}
+
 /**
  * @func
  *

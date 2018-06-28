@@ -21,7 +21,6 @@
 
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/RelayControl/RelayControl.h>
 #include "app/framework/include/af.h"
@@ -31,13 +30,8 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-//#define  DebugRelayControl
 
-#ifdef DebugRelayControl
-#define DBG_RELAY_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_RELAY_PRINT(...)
-#endif
+
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -51,7 +45,6 @@ RelayData_str gRelay;
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void relayHandler(byte_t *data);
-void errorMidRelayCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -86,11 +79,6 @@ void relayHandler(byte_t *data){
 	}
 	if(pvRelayCallbackHandle != NULL){
 		pvRelayCallbackHandle(gRelay.relayCurrentState);
-		DBG_RELAY_PRINT("    pvRelayCallback \n\r");
-	}
-	else{
-		errorMidRelayCallbackPrint();
-		// error_cb
 	}
 	gRelay.relayLastState = gRelay.relayCurrentState;
 	gRelay.LastTimeFromGetState = halCommonGetInt32uMillisecondTick();
@@ -105,21 +93,7 @@ void relayHandler(byte_t *data){
  *
  * @retval None
  */
-
-void errorMidRelayCallbackPrint(void){
-    DBG_RELAY_PRINT("    CallbackInMidRelaynError \n\r");
-}
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 void relayGetState(void){
-	cmdParseRelayCallbackInit(relayHandler);
 	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_RELAY,NULL, NULL);
 }
 /**

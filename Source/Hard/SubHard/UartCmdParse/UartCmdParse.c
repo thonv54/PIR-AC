@@ -21,20 +21,13 @@
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
+#include <Source/CustomLib/debugDef.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-#define  DebugCmdParse
-
-#ifdef DebugCmdParse
-#define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define	DBG_CMD_PARSE_PRINT(...)
-#endif
-
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -210,7 +203,7 @@ void uartSendCommand(byte_t txLength,
 	uartTxBuff[5] = cmdId;			//1byte cmdId
 	memcpy(&uartTxBuff[6],data,(lengthTxBuff - 4));
 
-	for (i = 2; i < lengthTxBuff -1; i++){
+	for (i = 3; i < lengthTxBuff -1; i++){
 		txCheckXor ^= uartTxBuff[i];
 	}
 	uartTxBuff[lengthTxBuff - 1] = txCheckXor;   // 1byte checkXor

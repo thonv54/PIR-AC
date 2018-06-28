@@ -22,6 +22,7 @@
 
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
+#include <Source/CustomLib/debugDef.h>
 #include "stack/include/event.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
@@ -29,14 +30,6 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
-#define DebugUartDriver
-
-#ifdef DebugUartDriver
-#define DBG_UART_DRIVER_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define	DBG_UART_DRIVER_PRINT(...)
-#endif
 
 
 /******************************************************************************/
@@ -120,8 +113,6 @@ byte_t uartGetCommand(void){
 
 	while ((wNumOfByteReceiver > 0)&&(byRetVal == resultRxIdle)){
 		(void)emberSerialReadByte(portUART,&byReadSerialData);
-
-		//DBG_UART_DRIVER_PRINT("%X",byReadSerialData);
 
 		switch (uartRxStruct.DataReceiverStep){
 		case stateSOF1:

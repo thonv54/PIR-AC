@@ -143,7 +143,7 @@ void nwkJoinEventFunction(void) {
 
 	NetworkStatus = emberAfNetworkState();
 	if (NetworkStatus == EMBER_NO_NETWORK) {
-			ledBlink(ledColorRed,4,1,ledLastStateRefresh);
+			ledBlink(ledColorBlue,4,1,ledLastStateRefresh);
 			emberSetTxPowerMode(EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER);
 			emberAfStartSearchForJoinableNetwork();
 			emberEventControlSetInactive(nwkJoinEventControl);
