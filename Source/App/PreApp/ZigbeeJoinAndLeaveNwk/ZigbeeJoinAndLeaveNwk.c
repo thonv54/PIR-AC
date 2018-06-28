@@ -53,47 +53,48 @@ EmberEventControl nwkLeaveEventControl;
 EmberEventControl nwkJoinEventControl;
 
 
-int8u g_checkHcConnectCnt;
+byte_t g_checkHcConnectCnt;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void nwkJoinEventFunction(void);
 void nwkLeaveEventFunction(void);
-void zigbeeLeaveNwkByButtonPress(int8u buttonState);
+void zigbeeLeaveNwkByButtonHandle(byte_t buttonState);
 void checkHcConnectEventFunction(void);
 void checkHcConnectionIsOk(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 void zigbeeLeaveByButtonInit(void);
+
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
+
 void zigbeeLeaveByButtonInit(void) {
-	buttonCallbackInit(zigbeeLeaveNwkByButtonPress, NULL);
+	buttonCallbackInit(zigbeeLeaveNwkByButtonHandle);
 	emberEventControlSetDelayMS(nwkJoinEventControl,1000);
 }
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
 
-
-void zigbeeLeaveNwkByButtonPress(int8u buttonState){
+void zigbeeLeaveNwkByButtonHandle(byte_t buttonState){
 	switch(buttonState){
-	case stHold5s:         // neu nhan giu den 5s --> led sang hong
+	case stHold5s:         // hold 5s --> led on pink
 		ledTurnOn(ledColorPink);
 		break;
 	case rlHold5s:
@@ -101,23 +102,22 @@ void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 		if ((NetworkStatus == EMBER_JOINED_NETWORK)
 				|| (NetworkStatus == EMBER_JOINED_NETWORK_NO_PARENT)) {
 			//send leave response
-			int8u contents[ZDO_MESSAGE_OVERHEAD + 1];
+			byte_t contents[ZDO_MESSAGE_OVERHEAD + 1];
 			contents[0] = 0x00;
 			(void) emberSendZigDevRequest(0x0000, LEAVE_RESPONSE,
 					EMBER_AF_DEFAULT_APS_OPTIONS, contents, sizeof(contents));
-			// refreshled by relay state
+			// refresh led by relay state
 			emberLeaveNetwork();
 			emberClearBindingTable();
 		}
-		// neu thiet bi khong trong mang - reset luon
+		// reset if not connect
 		else {
 				ledBlink(ledColorPink,4,2,ledLastStateRefresh);
 			emberEventControlSetInactive(nwkLeaveEventControl);
 			emberEventControlSetDelayMS(nwkLeaveEventControl, 1000);
 		}
 		break;
-	default:		// neu chuyen sang bat ki trang thai nao khac -- > led resfresh
-
+	default:		// led refresh
 		if(gRelay.relayCurrentState == boolRlOn){
 			ledTurnOn(ledColorBlue);
 		}
@@ -129,13 +129,13 @@ void zigbeeLeaveNwkByButtonPress(int8u buttonState){
 }
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
 
 void nwkJoinEventFunction(void) {
@@ -148,21 +148,21 @@ void nwkJoinEventFunction(void) {
 			emberAfStartSearchForJoinableNetwork();
 			emberEventControlSetInactive(nwkJoinEventControl);
 			emberEventControlSetDelayMS(nwkJoinEventControl,
-							   2000 + ((int8u)halCommonGetRandom() << 5)); // 2s + random 8s
+							   2000 + ((byte_t)halCommonGetRandom() << 5)); // 2s + random 8s
 
 	}
 	else if (NetworkStatus == EMBER_JOINED_NETWORK) {
-		//if the first join to network, device must be read network infomation
+		//if the first join to network, device must be read network information
 //		GetHcActiveEndPoint();
 //		ledBlink(ledColorPink,400,2,ledLastStateRefresh);
 		emberEventControlSetInactive(nwkJoinEventControl);
 
-		// neu vao mang, gui trang thai theo chu ki 4 phut 1 lan
+		// if Joined in network, check connect per 4 minutes
 		initActiveEndpointResponseCallback(checkHcConnectionIsOk);
 		emberEventControlSetInactive(checkHcConnectEventControl);
 		emberEventControlSetDelayMS(checkHcConnectEventControl,
 								 halCommonGetRandom());
-		// hoi Lux
+		// get sensor data
 		getLuxValue();
 		relayGetState();
 		getPirState();
@@ -171,13 +171,13 @@ void nwkJoinEventFunction(void) {
 }
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
 
 void nwkLeaveEventFunction(void) {
@@ -188,17 +188,24 @@ void nwkLeaveEventFunction(void) {
 /** @brief Stack Status
  *
  * This function is called by the application framework from the stack status
- * handler.  This callbacks provides applications an opportunity to be notified
+ * handler.  This callback provides applications an opportunity to be notified
  * of changes to the stack status and take appropriate action.  The return code
  * from this callback is ignored by the framework.  The framework will always
  * process the stack status after the callback returns.
  *
- * @param status   Ver.: always
+ * @function     :
+ *
+ * @brief        :
+ *
+ * @parameter    :
+ *
+ * @return value :
  */
+
 boolean emberAfStackStatusCallback(EmberStatus status)
 {
 	if(status == EMBER_NETWORK_DOWN){
-		int8u NetworkStatus = emberAfNetworkState();
+		byte_t NetworkStatus = emberAfNetworkState();
 		if (NetworkStatus == EMBER_NO_NETWORK){
 				ledBlink(ledColorPink,4,2,ledLastStateRefresh);
 			emberEventControlSetInactive(nwkLeaveEventControl);
@@ -207,21 +214,20 @@ boolean emberAfStackStatusCallback(EmberStatus status)
 	}
 	else if(status == EMBER_NETWORK_UP){
 			ledBlink(ledColorPink,4,3,ledLastStateRefresh);
-	   // gui ngay thong tin model cua thiet bi, du sao thi HC cung hoi nen khong can gui cung duoc
+	   // send model of device
 		zbSendBasicModelAttributeResponse();
 	}
 	return false;
 }
 
 /**
- * @emberIncomingManyToOneRouteRequestHandler
+ * @function     :
  *
- * @brief  gui gia tri cam bien anh sang moi khi nhan duoc ban tin manytooneroute request
- * muc dich de duy tri ket noi
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
 
 void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
@@ -234,35 +240,36 @@ void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
 	}
 }
 
-
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
+
 void checkHcConnectionIsOk(void){
     g_checkHcConnectCnt = 0;
 }
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
+
 void checkHcConnectEventFunction(void){
 	emberEventControlSetInactive(checkHcConnectEventControl);
 	emberEventControlSetDelayQS(checkHcConnectEventControl,checkHcConnectTime);
 	ZbSendZdoGetHcActiveEndpoint();
 	g_checkHcConnectCnt++;
 	if(g_checkHcConnectCnt >= 10){
-		halReboot(); // neu 10 lan loi lien tiep // cho reset.
+		halReboot(); // if g_checkHcConnectCount = 10, reset device
 	}
 }

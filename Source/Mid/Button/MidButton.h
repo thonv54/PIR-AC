@@ -29,8 +29,8 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 typedef enum{
-	stPress = 0,    // bat dau nhan nut
-	stHold3s = 1,	// thoi diem giu toi 3s
+	stPress = 0,
+	stHold3s = 1,
 	stHold5s = 2,
 	stHold10s = 3,
 	rlPress  = 4,
@@ -45,11 +45,6 @@ typedef enum{
 }buttonState_enum;
 
 
-
-//typedef void (*typeButtonHold10sCallback)(int8u data);
-//typedef void (*typeButtonHold3sCallback)(int8u data);
-typedef void (*typeButtonHold5sCallback)(int8u data);
-typedef void (*typeButtonPressCallback)(int8u data);
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -61,16 +56,18 @@ typedef void (*typeButtonPressCallback)(int8u data);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void buttonCallbackInit(typeButtonHold5sCallback buttonHold5sCallback,
-				typeButtonPressCallback buttonPressCallback);
+
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
+
+void buttonCallbackInit(byteCallbackFunc buttonHandleCallback);
+
 
 #endif /* 1_SOURCECODE_1_MID_BUTTON_BUTTON_H_ */

@@ -47,9 +47,9 @@ byte_pCallbackFunc pvUartInitCallback;
 
 byte_t portUartInit;
 
-static byte_t uartTxBuff[MAX_LENGTH_CMD_TX];
+static byte_t uartTxBuff[MAX_LENGTH_CMD_TX]; // Buffer luu data gui di
 static byte_t lengthTxBuff;
-static byte_t sequenceTx = 0;
+static byte_t sequenceTx = 0;               // sequence tang len sau moi lan gui
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -117,13 +117,13 @@ void cmdParseSensorCallbackInit(byte_pCallbackFunc getSensorCallback){
 	}
 }
 
-void cmdParseRelayCallbackInit(byte_pCallbackFunc  getRelayCallback){
+void cmdParseRelayCallbackInit(byte_pCallbackFunc getRelayCallback){
 	if(getRelayCallback != NULL){
 		pvRelayCallback = getRelayCallback;
 	}
 }
 
-void cmdParseLedCallbackInit(byte_pCallbackFunc  getLedCallback){
+void cmdParseLedCallbackInit(byte_pCallbackFunc getLedCallback){
 	if(getLedCallback != NULL){
 		pvLedCallback = getLedCallback;
 	}
@@ -214,8 +214,6 @@ void uartSendCommand(byte_t txLength,
 		txCheckXor ^= uartTxBuff[i];
 	}
 	uartTxBuff[lengthTxBuff - 1] = txCheckXor;   // 1byte checkXor
-
-	WriteOnTopBuffTx ((byte_p) &uartTxBuff, lengthTxBuff, TxCallbackFunc);
-
+	WriteOnTopBuffTx ((byte_p) &uartTxBuff, lengthTxBuff, TxCallbackFunc); // write data on Queue
 	sequenceTx ++;
 }

@@ -47,12 +47,11 @@ typedef struct{
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
 
-typeButtonHold5sCallback pvButtonHold5sCallback;
-typeButtonPressCallback pvButtonPressCallback;
+byteCallbackFunc pvButtonHandleCallback;
+
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-
 
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
@@ -61,44 +60,40 @@ void buttonStateFromUartHandle(byte_t *data);
 
 ButtonData_str pvButton;
 
-void errorMidButtonCallbackPrint(void);
-
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
 
+void buttonCallbackInit(byteCallbackFunc buttonHandleCallback);
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
 
-void buttonCallbackInit(typeButtonHold5sCallback buttonHold5sCallback,
-				typeButtonPressCallback buttonPressCallback){
+void buttonCallbackInit (byteCallbackFunc buttonHandleCallback){
 	cmdParseButtonCallbackInit(buttonStateFromUartHandle);
-	if(buttonHold5sCallback != NULL){
-		pvButtonHold5sCallback = buttonHold5sCallback;
+	if (buttonHandleCallback != NULL){
+		pvButtonHandleCallback = buttonHandleCallback;
 	}
-	if(buttonPressCallback != NULL){
-		pvButtonPressCallback = buttonPressCallback;
-	}
-
 }
 
+
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value :
  */
+
 void buttonStateFromUartHandle(byte_t* data){
 
 	pvButton.ButtonCurrentState = (byte_t)*data;
@@ -106,52 +101,32 @@ void buttonStateFromUartHandle(byte_t* data){
 	case BUTTON_HOLD10s:
 		break;
 	case BUTTON_HOLD5S:
-		if(pvButtonHold5sCallback != NULL){
-			pvButtonHold5sCallback(stHold5s);
-		}
-		else{
-			// cb_error
-			errorMidButtonCallbackPrint();
+		if(pvButtonHandleCallback != NULL){
+			pvButtonHandleCallback(stHold5s);
 		}
 		break;
 	case BUTTON_HOLD3S:
 		break;
 	case BUTTON_PRESS:
-		if(pvButtonPressCallback != NULL){
-			pvButtonPressCallback(stPress);
-		}
-		else{
-			// cb_error
-			errorMidButtonCallbackPrint();
+		if(pvButtonHandleCallback != NULL){
+			pvButtonHandleCallback(stPress);
 		}
 		break;
 	case BUTTON_RELEASE:
 		switch(pvButton.ButtonLastState){
 		case BUTTON_PRESS:
-			if(pvButtonPressCallback != NULL){
-				pvButtonPressCallback(rlPress);
-			}
-			else{
-				// cb_error
-				errorMidButtonCallbackPrint();
+			if(pvButtonHandleCallback != NULL){
+				pvButtonHandleCallback(rlPress);
 			}
 			break;
 		case BUTTON_HOLD5S:
-			if(pvButtonHold5sCallback != NULL){
-				pvButtonHold5sCallback(rlHold5s);
-			}
-			else{
-				// cb_error
-				errorMidButtonCallbackPrint();
+			if(pvButtonHandleCallback != NULL){
+				pvButtonHandleCallback(rlHold5s);
 			}
 			break;
 		default:
-			if(pvButtonPressCallback != NULL){
-				pvButtonPressCallback(rlPress);
-			}
-			else{
-				// cb_error
-				errorMidButtonCallbackPrint();
+			if(pvButtonHandleCallback != NULL){
+				pvButtonHandleCallback(rlPress);
 			}
 			break;
 		}
@@ -165,34 +140,11 @@ void buttonStateFromUartHandle(byte_t* data){
 }
 
 /**
- * @func
+ * @function     :
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
- */
-void errorMidButtonCallbackPrint(void){
-    DBG_BUTTON_PRINT("    CallbackInMidButtonError \n\r");
-}
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
+ * @return value :
  */

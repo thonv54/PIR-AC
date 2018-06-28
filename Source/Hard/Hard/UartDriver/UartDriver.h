@@ -32,7 +32,7 @@
 #define MAX_BUFF              10
 #define MAX_LENGTH_CMD_TX     20
 #define PERIOD_RX_MS          70    // check receiver per T =70 milliseconds
-#define TIME_WAIT_RES         50    //  wait response after n = 50 times check receiver. n x T milliseconds
+#define TIME_WAIT_RES         5    //  wait response after n = 50 times check receiver. n x T milliseconds
 
 #define RX_TIMEOUT            500  // 500ms
 
