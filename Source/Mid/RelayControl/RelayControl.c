@@ -30,22 +30,19 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-//#define  DebugRelayControl
 
-#ifdef DebugRelayControl
-#define DBG_RELAY_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_RELAY_PRINT(...)
-#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
+
 boolCallbackFunc pvRelayCallbackHandle;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
+
 RelayData_str gRelay;
+
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
@@ -86,7 +83,6 @@ void relayHandler(byte_t *data){
 	}
 	if(pvRelayCallbackHandle != NULL){
 		pvRelayCallbackHandle(gRelay.relayCurrentState);
-		DBG_RELAY_PRINT("    pvRelayCallback \n\r");
 	}
 	gRelay.relayLastState = gRelay.relayCurrentState;
 	gRelay.LastTimeFromGetState = halCommonGetInt32uMillisecondTick();
@@ -102,7 +98,6 @@ void relayHandler(byte_t *data){
  * @retval None
  */
 void relayGetState(void){
-	cmdParseRelayCallbackInit(relayHandler);
 	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_RELAY,NULL, NULL);
 }
 /**

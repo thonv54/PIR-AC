@@ -22,7 +22,6 @@
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
-#include <Source/CustomLib/debugDef.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/LedControl/LedControl.h>
@@ -38,13 +37,11 @@
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
 
-byte_t currentLedColor;
 
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 
-void ledResponseHandle(byte_t* data);
 
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
@@ -56,34 +53,6 @@ void ledBlink(byte_t color,
 				byte_t times,
 				byte_t lastState);
 
-
-/**
- * @function      :
- *
- * @brief         :
- *
- * @parameter     :
- *
- * @return value  :
- */
-
-void ledResponseCallbackInit(void){
-	cmdParseLedCallbackInit(ledResponseHandle);
-}
-
-/**
- * @function      :
- *
- * @brief         :
- *
- * @parameter     :
- *
- * @return value  :
- */
-
-void ledResponseHandle(byte_t* data){
-	currentLedColor = (byte_t)*data;
-}
 
 /**
  * @function      :
@@ -142,20 +111,6 @@ void ledBlink(byte_t color,
 	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor,NULL);
 }
 
-/**
- * @function      :
- *
- * @brief         :
- *
- * @parameter     :
- *
- * @return value  :
- */
-
-void ledGetState(void){
-	ledResponseCallbackInit();
-	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL,NULL);
-}
 
 /**
  * @function      :

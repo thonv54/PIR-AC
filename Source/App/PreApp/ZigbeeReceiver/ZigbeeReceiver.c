@@ -18,7 +18,6 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
-
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include "attribute-id.h"

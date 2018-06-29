@@ -37,7 +37,6 @@ typedef enum{
 	ledColorPink = 3,
 }ledColor_enum;
 
-
 typedef enum{
 	ledStateOn = 0,
 	ledStateOff = 1,
@@ -66,7 +65,8 @@ typedef enum{
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
-extern int8u currentLedColor;
+
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -76,18 +76,6 @@ void ledBlink(int8u color,
 				int8u timeDelay,
 				int8u times,
 				int8u lastState);
-
-void ledResponseCallbackInit(void);
-void ledGetState(void);
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 
 
