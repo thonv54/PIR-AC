@@ -21,7 +21,6 @@
 #include <Source/App/PreApp/ZigbeeSend/ZigbeeSend.h>
 #include <Source/App/PreApp/ZigbeeUtility/ZigbeeDefine.h>
 #include <Source/CustomLib/macro.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Mid/Button/MidButton.h>
 #include <Source/Mid/LedControl/LedControl.h>
 #include <Source/Mid/RelayControl/RelayControl.h>
@@ -73,8 +72,8 @@ void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void zbSendRelayState(boolean State);
-void zbSendPirState(boolean State);
+void zbSendRelayState(bool_t State);
+void zbSendPirState(bool_t State);
 void zbSendLuxValue(int16u Value);
 void zbSendLightThress(int16u Value);
 void zbSendPirTimeout(int32u Value);
@@ -84,19 +83,21 @@ void zbSendInit(void);
 
 /******************************************************************************/
 
-
+// Check connect to HC
 void ZbSendZdoGetHcActiveEndpoint(void) {
     emberActiveEndpointsRequest(0x000, EMBER_AF_DEFAULT_APS_OPTIONS | 0x0040);
 }
+
 /**
- * @func
+ * @function     : zbSendInit
  *
- * @brief  None
+ * @brief        : initialize callback
  *
- * @param  None
+ * @parameter    : None
  *
- * @retval None
+ * @return value : None
  */
+
 void zbSendInit(void){
 	sensorPirCallbackInit(zbSendPirState);
 	sensorPirTimeoutCallbackInit(zbSendPirTimeout);
@@ -106,25 +107,16 @@ void zbSendInit(void){
 }
 
 /**
- * @func
+ * @function     : zbSendRelayState
  *
- * @brief  None
+ * @brief        : send relay state to HC
  *
- * @param  None
+ * @parameter    : state
  *
- * @retval None
+ * @return value : None
  */
-void zbSendRelayState(boolean State){
-//	switch(State){
-//	case 0:
-//		ledTurnOn(ledColorRed);
-//		break;
-//	case 1:
-//		ledTurnOn(ledColorBlue);
-//		break;
-//	default:
-//		break;
-//	}
+
+void zbSendRelayState(bool_t State){
 	SendGlobalServerToClientReadAttributeResponse(zbLightEp,
 			ZCL_ON_OFF_CLUSTER_ID,
 			ZCL_ON_OFF_ATTRIBUTE_ID,
@@ -133,16 +125,16 @@ void zbSendRelayState(boolean State){
 }
 
 /**
- * @func
+ * @function     : zbSendPirState
  *
- * @brief  None
+ * @brief        : Send PIR State to HC
  *
- * @param  None
+ * @parameter    : state
  *
- * @retval None
+ * @return value : None
  */
 
-void zbSendPirState(boolean State){
+void zbSendPirState(bool_t State){
 	int16u zoneStatusBitmap;
 	if(State == boolPirNoMotion){
 		zoneStatusBitmap = PIR_NO_MOTION;
@@ -160,13 +152,13 @@ void zbSendPirState(boolean State){
 }
 
 /**
- * @func
+ * @function     : zbSendLuxValue
  *
- * @brief  None
+ * @brief        : Send LUX value to HC
  *
- * @param  None
+ * @parameter    : value
  *
- * @retval None
+ * @return value :
  */
 
 void zbSendLuxValue(int16u Value){
@@ -176,14 +168,15 @@ void zbSendLuxValue(int16u Value){
 												(int8u*)&Value,
 												ZCL_INT16U_ATTRIBUTE_TYPE);
 }
+
 /**
- * @func
+ * @function     : zbSendLightThress
  *
- * @brief  None
+ * @brief        : Send light Threshold to HC
  *
- * @param  None
+ * @parameter    : value
  *
- * @retval None
+ * @return value : None
  */
 
 void zbSendLightThress(int16u Value){
@@ -195,13 +188,13 @@ void zbSendLightThress(int16u Value){
 }
 
 /**
- * @func
+ * @function     : zbSendPirTimeout
  *
- * @brief  None
+ * @brief        : Send time value to HC
  *
- * @param  None
+ * @parameter    : value
  *
- * @retval None
+ * @return value : None
  */
 
 void zbSendPirTimeout(int32u Value){
@@ -213,15 +206,14 @@ void zbSendPirTimeout(int32u Value){
 												ZCL_INT32U_ATTRIBUTE_TYPE);
 }
 
-
 /**
- * @func
+ * @function     : zbSendBasicModelAttributeResponse
  *
- * @brief  None
+ * @brief        : Send information to HC
  *
- * @param  None
+ * @parameter    : None
  *
- * @retval None
+ * @return value : None
  */
 
 void zbSendBasicModelAttributeResponse(void){
@@ -233,14 +225,15 @@ void zbSendBasicModelAttributeResponse(void){
 			(int8u*)&data,
 			ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
 }
+
 /**
- * @func
+ * @function     : zbSendBasicManufacturerAttributeResponse
  *
- * @brief  None
+ * @brief        : Send manufacturer information to HC
  *
- * @param  None
+ * @parameter    : None
  *
- * @retval None
+ * @return value : None
  */
 
 void zbSendBasicManufacturerAttributeResponse(void){
@@ -252,15 +245,17 @@ void zbSendBasicManufacturerAttributeResponse(void){
 			(int8u*)&data,
 			ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
 }
+
 /**
- * @func
+ * @function     : SendGlobalServerToClientReadAttributeResponse
  *
- * @brief  None
+ * @brief        : Send data to HC
  *
- * @param  None
+ * @parameter    :
  *
- * @retval None
+ * @return value : None
  */
+
 void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
         										   EmberAfClusterId clusterId,
 												   EmberAfAttributeId attributeId,
@@ -272,7 +267,7 @@ void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
 
     attributeReadResponse.AttributeID = attributeId;  // on-off
     attributeReadResponse.Status = 0x00;   // success
-    attributeReadResponse.DataType = dataType; //bool
+    attributeReadResponse.DataType = dataType; //boolean
     memcpy(attributeReadResponse.Value, value, emberAfGetDataSize(dataType));
     AttributeReadResponseLength = sizeof(attributeReadResponse.AttributeID)
             + sizeof(attributeReadResponse.Status)
@@ -284,15 +279,14 @@ void SendGlobalServerToClientReadAttributeResponse(int8u endpoint,
     emberAfSendCommandUnicast(EMBER_OUTGOING_DIRECT, 0x0000);
 }
 
-
 /**
- * @func
+ * @function     : SendGlobalServerToClientReadAttributeReport
  *
- * @brief  None
+ * @brief        :
  *
- * @param  None
+ * @parameter    : None
  *
- * @retval None
+ * @return value : None
  */
 
 void SendGlobalServerToClientReadAttributeReport(int8u endpoint,
@@ -304,7 +298,7 @@ void SendGlobalServerToClientReadAttributeReport(int8u endpoint,
     int16u attributeReadReportLength;
 
     attributeReadReport.AttributeID = attributeId;  // on-off
-    attributeReadReport.DataType = dataType; //bool
+    attributeReadReport.DataType = dataType; //boolean
     memcpy(attributeReadReport.Value, value, emberAfGetDataSize(dataType));
     attributeReadReportLength = sizeof(attributeReadReport.AttributeID)
             + sizeof(attributeReadReport.DataType) + emberAfGetDataSize(dataType);

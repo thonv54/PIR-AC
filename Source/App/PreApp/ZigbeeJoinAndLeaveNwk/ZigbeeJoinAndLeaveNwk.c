@@ -37,7 +37,7 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-typedef void (*checkHcConnectCallback)(void);
+//typedef void (*checkHcConnectCallback)(void);
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -68,13 +68,13 @@ void checkHcConnectionIsOk(void);
 void zigbeeLeaveByButtonInit(void);
 
 /**
- * @function     :
+ * @function     : zigbeeLeaveByButtonInit
  *
- * @brief        :
+ * @brief        : initialize buttonCallback
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void zigbeeLeaveByButtonInit(void) {
@@ -83,13 +83,13 @@ void zigbeeLeaveByButtonInit(void) {
 }
 
 /**
- * @function     :
+ * @function     : zigbeeLeaveNwkByButtonHandle
  *
- * @brief        :
+ * @brief        : handle data from button.c to leave network
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void zigbeeLeaveNwkByButtonHandle(byte_t buttonState){
@@ -97,8 +97,9 @@ void zigbeeLeaveNwkByButtonHandle(byte_t buttonState){
 	case stHold5s:         // hold 5s --> led on pink
 		ledTurnOn(ledColorPink);
 		break;
-	case rlHold5s:
+	case rlHold5s:        // if release after 5s
 		EmberNetworkStatus NetworkStatus = emberAfNetworkState();
+		// if connect, send leave request
 		if ((NetworkStatus == EMBER_JOINED_NETWORK)
 				|| (NetworkStatus == EMBER_JOINED_NETWORK_NO_PARENT)) {
 			//send leave response
@@ -107,8 +108,8 @@ void zigbeeLeaveNwkByButtonHandle(byte_t buttonState){
 			(void) emberSendZigDevRequest(0x0000, LEAVE_RESPONSE,
 					EMBER_AF_DEFAULT_APS_OPTIONS, contents, sizeof(contents));
 			// refresh led by relay state
-			emberLeaveNetwork();
-			emberClearBindingTable();
+			emberLeaveNetwork(); // Leave network
+			emberClearBindingTable(); //
 		}
 		// reset if not connect
 		else {
@@ -129,20 +130,20 @@ void zigbeeLeaveNwkByButtonHandle(byte_t buttonState){
 }
 
 /**
- * @function     :
+ * @function     : nwkJoinEventFunction
  *
- * @brief        :
+ * @brief        : Join to network
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void nwkJoinEventFunction(void) {
 	EmberNetworkStatus NetworkStatus;
-
+	// Check finding network
 	NetworkStatus = emberAfNetworkState();
-	if (NetworkStatus == EMBER_NO_NETWORK) {
+	if (NetworkStatus == EMBER_NO_NETWORK) {    // if no network, blink led and try again
 			ledBlink(ledColorRed,4,1,ledLastStateRefresh);
 			emberSetTxPowerMode(EMBER_AF_PLUGIN_NETWORK_FIND_RADIO_TX_POWER);
 			emberAfStartSearchForJoinableNetwork();
@@ -151,7 +152,7 @@ void nwkJoinEventFunction(void) {
 							   2000 + ((byte_t)halCommonGetRandom() << 5)); // 2s + random 8s
 
 	}
-	else if (NetworkStatus == EMBER_JOINED_NETWORK) {
+	else if (NetworkStatus == EMBER_JOINED_NETWORK) { // if joined, active checkHcConnectEventControl
 		//if the first join to network, device must be read network information
 //		GetHcActiveEndPoint();
 //		ledBlink(ledColorPink,400,2,ledLastStateRefresh);
@@ -171,13 +172,13 @@ void nwkJoinEventFunction(void) {
 }
 
 /**
- * @function     :
+ * @function     : nwkLeaveEventFunction
  *
- * @brief        :
+ * @brief        : reset device
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void nwkLeaveEventFunction(void) {
@@ -193,13 +194,13 @@ void nwkLeaveEventFunction(void) {
  * from this callback is ignored by the framework.  The framework will always
  * process the stack status after the callback returns.
  *
- * @function     :
+ * @function     : emberAfStackStatusCallback
  *
- * @brief        :
+ * @brief        : Handle when stack status is changed
  *
- * @parameter    :
+ * @parameter    : stack status
  *
- * @return value :
+ * @return value : false
  */
 
 boolean emberAfStackStatusCallback(EmberStatus status)
@@ -221,13 +222,13 @@ boolean emberAfStackStatusCallback(EmberStatus status)
 }
 
 /**
- * @function     :
+ * @function     : emberIncomingManyToOneRouteRequestHandler
  *
  * @brief        :
  *
  * @parameter    :
  *
- * @return value :
+ * @return value : None
  */
 
 void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
@@ -241,13 +242,13 @@ void emberIncomingManyToOneRouteRequestHandler(EmberNodeId source,
 }
 
 /**
- * @function     :
+ * @function     : checkHcConnectionIsOk
  *
  * @brief        :
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void checkHcConnectionIsOk(void){
@@ -255,13 +256,13 @@ void checkHcConnectionIsOk(void){
 }
 
 /**
- * @function     :
+ * @function     : checkHcConnectEventFunction
  *
- * @brief        :
+ * @brief        : send message to check connect to HC
  *
- * @parameter    :
+ * @parameter    : None
  *
- * @return value :
+ * @return value : None
  */
 
 void checkHcConnectEventFunction(void){

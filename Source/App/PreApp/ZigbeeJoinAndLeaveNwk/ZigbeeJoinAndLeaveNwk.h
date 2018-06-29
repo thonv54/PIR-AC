@@ -58,25 +58,4 @@ void zigbeeLeaveByButtonInit(void);
  */
 
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
 #endif /* 1_SOURCECODE_0_APP_PREAPP_ZIGBEEJOINANDLEAVENWK_ZIGBEEJOINANDLEAVENWK_H_ */

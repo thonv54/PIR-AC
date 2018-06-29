@@ -19,8 +19,8 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include <Source/CustomLib/macro.h>
+#include <Source/CustomLib/debugDef.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/Sensor/Sensor.h>
 #include "app/framework/include/af.h"
@@ -29,20 +29,13 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-
-
-#ifdef DebugSensor
-#define DBG_SENSOR_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_SENSOR_PRINT(...)
-#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeSensorPirCallback pvSensorPirCallback;
-typeSensorLuxValueCallback  pvSensorLuxValueCallback;
-typeSensorLightThressCallback pvSensorLightThressCallback;
-typeSensorPirTimeoutCallback pvSensorPirTimeoutCallback;
+boolCallbackFunc pvSensorPirCallback;
+wordCallbackFunc pvSensorLuxValueCallback;
+wordCallbackFunc pvSensorLightThressCallback;
+uintCallbackFunc pvSensorPirTimeoutCallback;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -52,14 +45,13 @@ sensorData_str gSensor;
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
 void pvSensorHandle(byte_t *data);
-void errorMidSensorCallbackPrint(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void sensorPirCallbackInit(typeSensorPirCallback sensorPirCallback);
-void sensorLuxvalueCallbackInit(typeSensorLuxValueCallback sensorLuxValueCallback);
-void sensorLightThressCallbackInit(typeSensorLightThressCallback SensorLightThressCallback );
-void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutCallback);
+void sensorPirCallbackInit(boolCallbackFunc sensorPirCallback);
+void sensorLuxvalueCallbackInit(wordCallbackFunc sensorLuxValueCallback);
+void sensorLightThressCallbackInit(wordCallbackFunc SensorLightThressCallback );
+void sensorPirTimeoutCallbackInit(uintCallbackFunc sensorPirTimeoutCallback);
 
 
 
@@ -72,25 +64,25 @@ void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutC
  *
  * @retval None
  */
-void sensorPirCallbackInit(typeSensorPirCallback sensorPirCallback){
+void sensorPirCallbackInit(boolCallbackFunc sensorPirCallback){
 	cmdParseSensorCallbackInit(pvSensorHandle);
 	if(sensorPirCallback != NULL){
 		pvSensorPirCallback = sensorPirCallback;
 	}
 }
-void sensorLuxvalueCallbackInit(typeSensorLuxValueCallback sensorLuxValueCallback){
+void sensorLuxvalueCallbackInit(wordCallbackFunc sensorLuxValueCallback){
 	cmdParseSensorCallbackInit(pvSensorHandle);
 	if(sensorLuxValueCallback!= NULL){
 		pvSensorLuxValueCallback = sensorLuxValueCallback;
 	}
 }
-void sensorLightThressCallbackInit(typeSensorLightThressCallback SensorLightThressCallback ){
+void sensorLightThressCallbackInit(wordCallbackFunc SensorLightThressCallback ){
 	cmdParseSensorCallbackInit(pvSensorHandle);
 	if(SensorLightThressCallback != NULL){
 		pvSensorLightThressCallback = SensorLightThressCallback;
 	}
 }
-void sensorPirTimeoutCallbackInit(typeSensorPirTimeoutCallback sensorPirTimeoutCallback){
+void sensorPirTimeoutCallbackInit(uintCallbackFunc sensorPirTimeoutCallback){
 	cmdParseSensorCallbackInit(pvSensorHandle);
 	if(sensorPirTimeoutCallback != NULL){
 		pvSensorPirTimeoutCallback = sensorPirTimeoutCallback;
@@ -123,9 +115,6 @@ void pvSensorHandle(byte_t *data){
 				pvSensorPirCallback(gSensor.pirCurrentState);
 				DBG_SENSOR_PRINT("    pvSensorPirCallback  \n\r");
 			}
-			else{
-				errorMidSensorCallbackPrint();
-			}
 			break;
 		case CMD_ID_LUX:
 			gSensor.luxValue = (((word_t)cmd->uLuxData.high_byte_Lux<< 8) | (cmd->uLuxData.low_byte_Lux)) ;
@@ -135,9 +124,6 @@ void pvSensorHandle(byte_t *data){
 				DBG_SENSOR_PRINT("    pvSensorLuxValueCallback  \n\r");
 
 			}
-			else{
-				errorMidSensorCallbackPrint();
-			}
 			break;
 		case CMD_ID_LIGHT_THRES:
 			gSensor.lightThress = (((word_t)cmd->uLightThressData.high_byte_LightThress<< 8)
@@ -145,9 +131,6 @@ void pvSensorHandle(byte_t *data){
 			if(pvSensorLightThressCallback != NULL){
 				pvSensorLightThressCallback(gSensor.lightThress);
 				DBG_SENSOR_PRINT("    pvSensorLightThressCallback  \n\r");
-			}
-			else{
-				errorMidSensorCallbackPrint();
 			}
 			break;;
 		case CMD_ID_TIMEOUT:
@@ -159,28 +142,12 @@ void pvSensorHandle(byte_t *data){
 				pvSensorPirTimeoutCallback(gSensor.pirTimeout);
 				DBG_SENSOR_PRINT("    pvSensorPirTimeoutCallback  \n\r");
 			}
-			else{
-				errorMidSensorCallbackPrint();
-			}
 			break;
 		default:
 			break;
 		}
 	}
 	gSensor.pirLastState = gSensor.pirCurrentState;
-}
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-void errorMidSensorCallbackPrint(void){
-    DBG_SENSOR_PRINT("    CallbackInMidSensorError \n\r");
 }
 /**
  * @func

@@ -87,6 +87,8 @@ void initActiveEndpointResponseCallback(typeZdoActiveEndpointResponseCallback ca
  * @param message   Ver.: always
  * @param length   Ver.: always
  */
+
+// Khi nhan duoc ban tin ZDO se goi ham nay
 boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
 		EmberApsFrame* apsFrame, int8u* message, int16u length) {
 	if (apsFrame->clusterId == ACTIVE_ENDPOINTS_RESPONSE) {
@@ -98,7 +100,7 @@ boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
 			FirstEndpointID = message[5];
 			gHcEndpoint = FirstEndpointID;
 		}
-		ZdoActiveEndpointResponseCallback();
+		ZdoActiveEndpointResponseCallback(); // if connect, reset checkHcConnectCnt
 
 	} else if (apsFrame->clusterId == SIMPLE_DESCRIPTOR_RESPONSE) {
 
@@ -119,6 +121,8 @@ boolean emberAfPreZDOMessageReceivedCallback(EmberNodeId emberNodeId,
  * @param endpoint Endpoint that is being initialized  Ver.: always
  * @param attributeId Attribute that changed  Ver.: always
  */
+
+// Khi nhan duoc ban tin co su thay doi gia tri LightThress se goi ham nay
 void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint,
                                                                   EmberAfAttributeId attributeId){
 	int16u value;
@@ -128,7 +132,7 @@ void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint
 				ZCL_ILLUM_MAX_MEASURED_VALUE_ATTRIBUTE_ID,
 				(int8u*)&value,
 				sizeof(value));
-		uartSendCommand(leSetupLightThressCmd,CMD_TYPE_SETUP,CMD_ID_LIGHT_THRES,(int8u*)&value, NULL);
+		uartSendCommand(leSetupLightThressCmd,CMD_TYPE_SETUP,CMD_ID_LIGHT_THRES,(int8u*)&value, NULL); // Send to MCU
 	}
 	else if(attributeId == ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID){
 		emberAfReadServerAttribute(endpoint,
@@ -136,18 +140,15 @@ void emberAfIllumMeasurementClusterServerAttributeChangedCallback(int8u endpoint
 				ZCL_ILLUM_MIN_MEASURED_VALUE_ATTRIBUTE_ID,
 				(int8u*)&value,
 				sizeof(value));
-		uartSendCommand(leSetupTimeThressCmd,CMD_TYPE_SETUP,CMD_ID_TIMEOUT,(int8u*)&value, NULL);
+		uartSendCommand(leSetupTimeThressCmd,CMD_TYPE_SETUP,CMD_ID_TIMEOUT,(int8u*)&value, NULL); // Send to MCU
 
 	}
 }
 
 
 /** @brief On/off Cluster Off
- *
- *
- *
  */
-boolean emberAfOnOffClusterOffCallback(void)
+boolean emberAfOnOffClusterOffCallback(void) // Khi nhan duoc lenh off tu HC se goi ham nay
 {
 	int8u relayState = rlOffState;
 	boolean value = 0;
@@ -172,7 +173,7 @@ boolean emberAfOnOffClusterToggleCallback(void)
  *
  *
  */
-boolean emberAfOnOffClusterOnCallback(void)
+boolean emberAfOnOffClusterOnCallback(void) //Khi nhan duoc lenh on tu HC se goi ham nay
 {
 	int8u relayState = rlOnState;
 	boolean value = 1;

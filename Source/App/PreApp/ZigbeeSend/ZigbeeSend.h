@@ -23,6 +23,8 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 #include "app/framework/include/af.h"
+#include <Source/CustomLib/typedefs.h>
+
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -41,11 +43,11 @@
 /******************************************************************************/
 void zbSendInit(void);
 
-void zbSendRelayState(boolean State);
-void zbSendPirState(boolean State);
-void zbSendLuxValue(int16u Value);
-void zbSendLightThress(int16u Value);
-void zbSendPirTimeout(int32u Value);
+void zbSendRelayState(bool_t State);
+void zbSendPirState(bool_t State);
+void zbSendLuxValue(word_t Value);
+void zbSendLightThress(word_t Value);
+void zbSendPirTimeout(uint_t Value);
 void zbSendBasicModelAttributeResponse(void);
 void zbSendBasicManufacturerAttributeResponse(void);
 void ZbSendZdoGetHcActiveEndpoint(void);

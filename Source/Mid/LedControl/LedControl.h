@@ -90,25 +90,5 @@ void ledGetState(void);
  */
 
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 #endif /* 1_SOURCECODE_1_MID_LEDCONTROL_LEDCONTROL_H_ */

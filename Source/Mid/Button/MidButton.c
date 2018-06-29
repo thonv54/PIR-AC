@@ -97,6 +97,7 @@ void buttonStateFromUartHandle(byte_t* data){
 	case BUTTON_HOLD10s:
 		break;
 	case BUTTON_HOLD5S:
+		DBG_BUTTON_PRINT("Button hold5s." );
 		if(pvButtonHandleCallback != NULL){
 			pvButtonHandleCallback(stHold5s);
 		}
@@ -116,6 +117,7 @@ void buttonStateFromUartHandle(byte_t* data){
 			}
 			break;
 		case BUTTON_HOLD5S:
+			DBG_BUTTON_PRINT("Button release hold5s." );
 			if(pvButtonHandleCallback != NULL){
 				pvButtonHandleCallback(rlHold5s);
 			}

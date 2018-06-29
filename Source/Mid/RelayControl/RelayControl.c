@@ -21,7 +21,6 @@
 
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/RelayControl/RelayControl.h>
 #include "app/framework/include/af.h"
@@ -41,7 +40,7 @@
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
-typeRelayCallback pvRelayCallbackHandle;
+boolCallbackFunc pvRelayCallbackHandle;
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
@@ -50,16 +49,17 @@ RelayData_str gRelay;
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
+
 void relayHandler(byte_t *data);
-void errorMidRelayCallbackPrint(void);
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void relayCallbackInit(typeRelayCallback relayCallback);
+void relayCallbackInit(boolCallbackFunc relayCallback);
 void relayGetState(void);
 
 
-void relayCallbackInit(typeRelayCallback relayCallback){
+void relayCallbackInit(boolCallbackFunc relayCallback){
 	cmdParseRelayCallbackInit(relayHandler);
 	if(relayCallback != NULL){
 		pvRelayCallbackHandle = relayCallback;
@@ -88,27 +88,10 @@ void relayHandler(byte_t *data){
 		pvRelayCallbackHandle(gRelay.relayCurrentState);
 		DBG_RELAY_PRINT("    pvRelayCallback \n\r");
 	}
-	else{
-		errorMidRelayCallbackPrint();
-		// error_cb
-	}
 	gRelay.relayLastState = gRelay.relayCurrentState;
 	gRelay.LastTimeFromGetState = halCommonGetInt32uMillisecondTick();
 }
 
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
-
-void errorMidRelayCallbackPrint(void){
-    DBG_RELAY_PRINT("    CallbackInMidRelaynError \n\r");
-}
 /**
  * @func
  *

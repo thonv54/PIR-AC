@@ -19,7 +19,7 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
-
+#include <Source/CustomLib/typedefs.h>
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/debugDef.h>

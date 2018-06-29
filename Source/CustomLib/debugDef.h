@@ -49,6 +49,13 @@
 #define	DBG_BUTTON_PRINT(...)
 #endif
 
+//#define DebugSensor
+
+#ifdef DebugSensor
+#define DBG_SENSOR_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
+#else
+#define DBG_SENSOR_PRINT(...)
+#endif
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/

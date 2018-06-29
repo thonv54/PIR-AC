@@ -23,7 +23,6 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-typedef void (*typeRelayCallback)(boolean data);
 typedef struct{
 	boolean relayCurrentState;
 	boolean relayLastState;
@@ -52,28 +51,9 @@ extern RelayData_str gRelay;
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-void relayCallbackInit(typeRelayCallback relayCallback);
+void relayCallbackInit(boolCallbackFunc relayCallback);
 void relayGetState(void);
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
- */
 
 
 /**

@@ -22,19 +22,14 @@
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>
+#include <Source/CustomLib/debugDef.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmd.h>
-//#include <Source/Hard/Hard/UartDriver/UartDriver.h>
 #include <Source/Hard/SubHard/UartCmdParse/UartCmdParse.h>
 #include <Source/Mid/LedControl/LedControl.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-#ifdef DebugLedControl
-#define DBG_LED_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define DBG_LED_PRINT(...)
-#endif
 
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
@@ -42,12 +37,15 @@
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
 /******************************************************************************/
+
 byte_t currentLedColor;
+
 /******************************************************************************/
 /*                            PRIVATE FUNCTIONS                               */
 /******************************************************************************/
-void errorMidLedCallbackPrint(void);
+
 void ledResponseHandle(byte_t* data);
+
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
@@ -60,39 +58,43 @@ void ledBlink(byte_t color,
 
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledResponseCallbackInit(void){
 	cmdParseLedCallbackInit(ledResponseHandle);
 }
+
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledResponseHandle(byte_t* data){
 	currentLedColor = (byte_t)*data;
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledTurnOn(byte_t color){
 	ledParam_str ledParam;
 	ledParam.LedColor = color;
@@ -101,14 +103,15 @@ void ledTurnOn(byte_t color){
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledTurnOff(void){
 	ledParam_str ledParam;
 	ledParam.LedColor = ledColorPink;
@@ -116,16 +119,16 @@ void ledTurnOff(void){
 	uartSendCommand(leSetupLedCmd,CMD_TYPE_SETUP,CMD_ID_LED,&ledParam.LedColor, NULL);
 }
 
-
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledBlink(byte_t color,
 				byte_t timeDelay,
 				byte_t times,
@@ -140,28 +143,26 @@ void ledBlink(byte_t color,
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
+
 void ledGetState(void){
 	ledResponseCallbackInit();
 	uartSendCommand(leRequestCmd,CMD_TYPE_REQUEST,CMD_ID_LED,NULL,NULL);
 }
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
-void errorMidLedCallbackPrint(void){
-    DBG_LED_PRINT("    CallbackInMidLedError \n\r");
-}
