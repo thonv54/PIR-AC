@@ -80,7 +80,6 @@ void ledTurnOn(byte_t color){
  *
  * @return value  :
  */
-
 void ledTurnOff(void){
 	ledParam_str ledParam;
 	ledParam.LedColor = ledColorPink;

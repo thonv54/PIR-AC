@@ -27,6 +27,7 @@
 #include "app/framework/include/af.h"
 #include "stack/include/event.h"
 #include "hal/micro/serial.h"
+#include <Source/Mid/Button/MidButton.h>
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
@@ -108,15 +109,29 @@ void TestEventFunction(void) {
 	}
 }
 */
+//void testButton(byte_t button);
 
 void emberAfMainInitCallback(void)
 {
+
 	uartParseDataInit(COM_USART0, NULL);
+	//buttonCallbackInit(testButton);
 	zbSendInit();
 	zigbeeLeaveByButtonInit();
-	//emberEventControlSetDelayMS(TestEventControl, 1000);
+	emberEventControlSetDelayMS(TestEventControl, 1000);
 }
 
+
+/*void testButton(byte_t button){
+	if (button == stHold5s){
+		ledBlink(ledColorPink,4,2,ledLastStateRefresh);
+	}
+	else if(button == rlHold5s){
+		ledBlink(ledColorBlue,4,2,ledLastStateRefresh);
+	}
+	else
+		ledBlink(ledColorPink,2,5,ledLastStateRefresh);
+}*/
 
 /**
  * @function      :

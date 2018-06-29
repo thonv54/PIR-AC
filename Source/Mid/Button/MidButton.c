@@ -19,7 +19,7 @@
 /*                              INCLUDE FILES                                 */
 /******************************************************************************/
 
-
+#include <Source/Mid/LedControl/LedControl.h>
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
 #include <Source/CustomLib/macro.h>

@@ -18,7 +18,6 @@
 /******************************************************************************/
 
 //#define DebugUartDriver
-
 #ifdef DebugUartDriver
 #define DBG_UART_DRIVER_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
 #else
@@ -26,7 +25,6 @@
 #endif
 
 //#define DebugCmdParse
-
 #ifdef DebugCmdParse
 #define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
 #else
@@ -34,7 +32,6 @@
 #endif
 
 //#define DebugLed
-
 #ifdef DebugLed
 #define DBG_LED_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
 #else
@@ -50,7 +47,6 @@
 #endif
 
 //#define DebugSensor
-
 #ifdef DebugSensor
 #define DBG_SENSOR_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
 #else
