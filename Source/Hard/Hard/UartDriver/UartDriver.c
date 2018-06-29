@@ -22,6 +22,7 @@
 
 #include "app/framework/include/af.h"
 #include "app/framework/util/config.h"
+#include <Source/CustomLib/debugDef.h>
 #include "stack/include/event.h"
 #include <Source/CustomLib/macro.h>
 #include <Source/Hard/Hard/UartDriver/UartDriver.h>
@@ -29,14 +30,6 @@
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
-
-#define DebugUartDriver
-
-#ifdef DebugUartDriver
-#define DBG_UART_DRIVER_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define	DBG_UART_DRIVER_PRINT(...)
-#endif
 
 
 /******************************************************************************/
@@ -85,10 +78,23 @@ void uartSendNack(void);
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 /******************************************************************************/
-
 void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit);
 byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc TxCallbackFunc);
 
+
+
+/* Khoi tao uartDriver, cai dat port va ham callback de xu ly du lieu nhan duoc.
+ * Active event uartGetcmdEventFunction (kiem tra Rx), khoi tao buffer cua Tx.
+*/
+/**
+ * @function      : uartDriverInit
+ *
+ * @brief         : Initialize uartDriver
+ *
+ * @parameter     : port UART, receiver handle callback function
+ *
+ * @return value  : None
+ */
 
 void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit){
 	portUART = portUartInit;
@@ -98,17 +104,24 @@ void uartDriverInit(byte_t portUartInit, byte_pCallbackFunc pRxCallbackFuncInit)
 
 	uartRxStruct.DataReceiverStep = stateSOF1;
 	InitBuffTx();
-	emberEventControlSetActive(uartGetCmdEventControl);
+	emberEventControlSetDelayMS(uartGetCmdEventControl, 1000);
 }
 
+
+/* Kiem tra buffer Rx uart va phan tich xem do co chinh xac hay khong
+ * va tra ve ket qua cua viec nhan ban tin.
+ * Ban tin bao gom ACK, NACK, hoac command: SOF1, SOF2, length, data va check Xor
+ */
+
+
 /**
- * @function      :
+ * @function      : uartGetCommand
  *
- * @brief         :
+ * @brief         : Check receiver and handle
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : receiver result
  */
 
 byte_t uartGetCommand(void){
@@ -120,8 +133,6 @@ byte_t uartGetCommand(void){
 
 	while ((wNumOfByteReceiver > 0)&&(byRetVal == resultRxIdle)){
 		(void)emberSerialReadByte(portUART,&byReadSerialData);
-
-		//DBG_UART_DRIVER_PRINT("%X",byReadSerialData);
 
 		switch (uartRxStruct.DataReceiverStep){
 		case stateSOF1:
@@ -187,7 +198,7 @@ byte_t uartGetCommand(void){
 		wNumOfByteReceiver--;
 	}
 
-	if(byRetVal == resultRxIdle){
+	if(byRetVal == resultRxIdle){ //Check timeout
 		if ((bRxActive) && (uartGetElapsedTime(timeoutRx) >= RX_TIMEOUT)){
 			bRxActive = FALSE;                     // Receiver complete
 			uartRxStruct.DataReceiverStep = stateSOF1;
@@ -198,14 +209,20 @@ byte_t uartGetCommand(void){
 	return byRetVal;
 }
 
+/* Kich hoac moi chu ky PERIOD_RX_MS (ms) de kiem tra ket qua nhan duoc tu ham uartGetCommand
+ * Neu nhan duoc ACK, NACK la ket qua cua viec truyen ban tin, se goi ham callback cua Tx
+ * Neu nhan duoc ban tin dung se su ly qua ham callback cua Rx
+ */
+
+
 /**
- * @function      :
+ * @function      : uartGetCmdEventFunction
  *
- * @brief         :
+ * @brief         : event function, check data receiver
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
  */
 
 void uartGetCmdEventFunction(void){
@@ -258,14 +275,20 @@ void uartGetCmdEventFunction(void){
 	emberEventControlSetDelayMS(uartGetCmdEventControl,PERIOD_RX_MS); // 70ms check Buffer and Handle
 }
 
+/* Sau khi truyen ban tin, neu nhan duoc response (ACK, NACK) hoac qua thoi gian timeuot ham nay se duoc goi
+ * Ham nay se goi ham callback duoc init boi tang tren voi tham so la ket qua viec truyen ban tin
+ * Sau do se kich hoat lai Tx cho lan truyen tiep theo
+ */
+
+
 /**
- * @function     :
+ * @function     : ResultTxTimeout
  *
- * @brief        :
+ * @brief        : handle result of transmission if receiver NACK, ACK or timeout
  *
- * @parameter    :
+ * @parameter    : response of transmission
  *
- * @return value :
+ * @return value : None
  */
 
 void ResultTxTimeout(byte_t pResponse){
@@ -290,19 +313,22 @@ void ResultTxTimeout(byte_t pResponse){
 	}
 }
 
+/* Luu data can truyen vao top cua Queue, MAX_BUFF la so du lieu toi da co the luu vao Queue
+ * Du lieu luu bao gom length, data va callbackFunc
+ */
 
 /**
- * @function     :
+ * @function     : WriteOnTopBuffTx
  *
- * @brief        :
+ * @brief        : write data on Queue and wait transmit
  *
- * @parameter    :
+ * @parameter    : data, length of data, callbackFunction
  *
- * @return value :
+ * @return value : result: buffFull or buffSucess
  */
 
 
-byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc callbackFuntion){
+byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc callbackFunction){
 	if (TxBuffSeq.numberUnit == MAX_BUFF){
 		DBG_UART_DRIVER_PRINT("BuffFull.\n");
 		return buffFull;
@@ -311,7 +337,7 @@ byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc callba
 	UNIT_BUFF* unitBuff = &TxBuffSend[TxBuffSeq.topBuff];
 	unitBuff -> lengthTx = lengthData;
 	memcpy ((byte_p) &(unitBuff->dataTx), data, lengthData);
-	unitBuff -> callbackFuncTx = callbackFuntion;
+	unitBuff -> callbackFuncTx = callbackFunction;
 
 	TxBuffSeq.topBuff = (TxBuffSeq.topBuff + 1) % MAX_BUFF;
 	TxBuffSeq.numberUnit ++;
@@ -321,14 +347,17 @@ byte_t WriteOnTopBuffTx (byte_p data, byte_t lengthData, byteCallbackFunc callba
 	return buffSuccess;
 }
 
+/* Gui ban tin tu bottom cua Queue theo nguyen tac FIFO
+ */
+
 /**
- * @function      :
+ * @function      : SendDataFromBottomBuffTx
  *
- * @brief         :
+ * @brief         : send data on Queue
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
  */
 
 void SendDataFromBottomBuffTx(void){
@@ -340,14 +369,19 @@ void SendDataFromBottomBuffTx(void){
 }
 
 /**
- * @function      :
+ * @function      : uartSendCmdEventFunction
  *
- * @brief         :
+ * @brief         : event function, send data on Queue if transmission Idle
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
  */
+
+/* event function xay ra khi co yeu cau gui ban tin va Queue khong bi empty
+ *
+ */
+
 
 void uartSendCmdEventFunction(void){
 	if (TxBuffSeq.numberUnit == 0){
@@ -361,13 +395,16 @@ void uartSendCmdEventFunction(void){
 }
 
 /**
- * @function      :
+ * @function      : InitBuffTx
  *
- * @brief         :
+ * @brief         : initialize queue
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
+ */
+
+/* Khoi tao Queue
  */
 
 void InitBuffTx (void){
@@ -381,13 +418,13 @@ void InitBuffTx (void){
 
 
 /**
- * @function      :
+ * @function      : uartTimeoutReset
  *
- * @brief         :
+ * @brief         : reset timeoutRx
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
  */
 
 void uartTimeoutReset(){
@@ -395,13 +432,13 @@ void uartTimeoutReset(){
 }
 
 /**
- * @function      :
+ * @function      : uartGetElapsedTime
  *
- * @brief         :
+ * @brief         : get time elapsed
  *
- * @parameter     :
+ * @parameter     : timeoutRx
  *
- * @return value  :
+ * @return value  : time elapsed of receiver
  */
 
 uint_t uartGetElapsedTime(uint_t timeStart){
@@ -409,13 +446,13 @@ uint_t uartGetElapsedTime(uint_t timeStart){
 }
 
 /**
- * @function      :
+ * @function      : uartSendAck/uartSendNack
  *
- * @brief         :
+ * @brief         : send PacketACK and PacketNACK
  *
- * @parameter     :
+ * @parameter     : None
  *
- * @return value  :
+ * @return value  : None
  */
 
 void uartSendAck(void){

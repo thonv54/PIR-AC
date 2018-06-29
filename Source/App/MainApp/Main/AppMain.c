@@ -31,14 +31,6 @@
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 /******************************************************************************/
 
-#define DebugCmdParse
-
-#ifdef DebugCmdParse
-#define DBG_CMD_PARSE_PRINT(...) emberSerialPrintf(APP_SERIAL, __VA_ARGS__)
-#else
-#define	DBG_CMD_PARSE_PRINT(...)
-#endif
-
 /******************************************************************************/
 /*                              PRIVATE DATA                                  */
 /******************************************************************************/
@@ -58,14 +50,15 @@ void TestEventFunction(void);
 //void testTxCallback (byte_t result);
 
 /******************************************************************************/
+
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
+ * @return value  :
  */
 
 
@@ -126,21 +119,11 @@ void emberAfMainInitCallback(void)
 
 
 /**
- * @func
+ * @function      :
  *
- * @brief  None
+ * @brief         :
  *
- * @param  None
+ * @parameter     :
  *
- * @retval None
- */
-
-/**
- * @func
- *
- * @brief  None
- *
- * @param  None
- *
- * @retval None
+ * @return value  :
  */
